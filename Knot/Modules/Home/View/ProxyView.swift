@@ -185,7 +185,7 @@ class ServerView: UIView {
             m.right.equalToSuperview().offset(-LRSpacing)
             m.height.top.equalTo(ip)
         }
-        ipLabel.text = "127.0.0.1"
+        ipLabel.text = ProxyConfig.LocalProxy.host
         
         
         let port = UILabel()

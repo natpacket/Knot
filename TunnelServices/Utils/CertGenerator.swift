@@ -24,8 +24,8 @@ public class CertGenerator {
         caCert: Certificate
     ) throws -> Certificate {
         let subject = try DistinguishedName {
-            CountryName("SE")
-            OrganizationName("Company")
+            CountryName(ProxyConfig.CertSubject.country)
+            OrganizationName(ProxyConfig.CertSubject.organization)
             CommonName(host)
         }
 

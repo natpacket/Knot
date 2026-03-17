@@ -7,9 +7,10 @@
 //
 
 import UIKit
+import TunnelServices
 
-let SearchHistoryDidUpdateNoti = NSNotification.Name.init(rawValue: "SearchHistoryDidUpdateNoti")
-let SearchHistoryUserDefaults = "SearchHistoryUserDefaults"
+let SearchHistoryDidUpdateNoti = AppNotification.searchHistoryDidUpdate
+let SearchHistoryUserDefaults = PreferenceKeys.searchHistory
 
 protocol SearchHistoryViewDelegate: class {
     func historyDidClick(history:String)

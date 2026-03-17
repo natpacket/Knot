@@ -16,22 +16,22 @@ import _CryptoExtras
 import CocoaAsyncSocket
 import SQLite
 
-public let TaskDidChangedNotification = NSNotification.Name("TaskDidChangedNotification")
-public let TaskValueDidChanged = "TaskValueDidChanged"
-public let TaskConfigDidChanged = "TaskConfigDidChanged"
+public let TaskDidChangedNotification = AppNotification.taskDidChanged
+public let TaskValueDidChanged = AppNotification.taskValueDidChanged
+public let TaskConfigDidChanged = AppNotification.taskConfigDidChanged
 
 public class CaptureTask: ASModel {
 
     //
     var numberOfUse:NSNumber = 0  //使用次数，是否使用过
     //
-    public var localIP:String = "127.0.0.1" // 本机地址
-    public var localPort:NSNumber = 8034//本机端口
+    public var localIP:String = ProxyConfig.LocalProxy.host // 本机地址
+    public var localPort:NSNumber = NSNumber(value: ProxyConfig.LocalProxy.port)//本机端口
     public var localEnable:NSNumber = 1//本机开启 0:关闭 1:开启
     public var localState:NSNumber = 0   //本机状态 0:关闭、1:开启、-1异常
     
     public var wifiIP:String = ""//网卡地址
-    public var wifiPort:NSNumber = 8034//网卡端口
+    public var wifiPort:NSNumber = NSNumber(value: ProxyConfig.LocalProxy.port)//网卡端口
     public var wifiEnable:NSNumber = 1//网卡开启 0:关闭 1:开启
     public var wifiState:NSNumber = 0//网卡状态
     
@@ -288,38 +288,14 @@ public class CaptureTask: ASModel {
     
     func loadCACert(){
         certPool = ThreadSafeCertPool()
-        guard let certDir = MitmService.getCertPath() else { return }
-        let cacertPath = certDir.appendingPathComponent("cacert.pem", isDirectory: false).path.replacingOccurrences(of: "file://", with: "")
-        let cakeyPath = certDir.appendingPathComponent("cakey.pem", isDirectory: false).path.replacingOccurrences(of: "file://", with: "")
-        let rsakeyPath = certDir.appendingPathComponent("rsakey.pem", isDirectory: false).path.replacingOccurrences(of: "file://", with: "")
-
-        // Load NIOSSL types (for TLS handlers)
-        if let cert = try? NIOSSLCertificate(file: cacertPath, format: .pem) {
-            cacert = cert
-        } else {
-            AxLogger.log("Load CACert Failure !", level: .Error)
-        }
-        if let caPriKey = try? NIOSSLPrivateKey(file: cakeyPath, format: .pem) {
-            cakey = caPriKey
-        } else {
-            AxLogger.log("Load CAKey Failure !", level: .Error)
-        }
-        if let carsaKey = try? NIOSSLPrivateKey(file: rsakeyPath, format: .pem) {
-            rsakey = carsaKey
-        } else {
-            AxLogger.log("Load RSAKey Failure !", level: .Error)
-        }
-
-        // Load swift-certificates types (for cert generation)
-        if let cert = try? CertGenerator.loadCertificate(fromPEMFile: cacertPath) {
-            x509CACert = cert
-        } else {
-            AxLogger.log("Load X509 CACert Failure !", level: .Error)
-        }
-        if let key = try? CertGenerator.loadRSAPrivateKey(fromPEMFile: rsakeyPath) {
-            rsaSigningKey = key
-        } else {
-            AxLogger.log("Load RSA Signing Key Failure !", level: .Error)
+        let store = CertStore()
+        cacert = store.cacert
+        cakey = store.cakey
+        rsakey = store.rsakey
+        x509CACert = store.x509CACert
+        rsaSigningKey = store.rsaSigningKey
+        if !store.isValid {
+            AxLogger.log("CertStore: some certificates failed to load", level: .Error)
         }
     }
     
@@ -346,7 +322,7 @@ public class CaptureTask: ASModel {
     }
     
     func sendInfo(data:Data) {
-        udpSocket?.send(data, toHost: "127.0.0.1", port: 60001, withTimeout: -1, tag: 1)
+        udpSocket?.send(data, toHost: ProxyConfig.IPC.udpHost, port: ProxyConfig.IPC.udpPort, withTimeout: -1, tag: 1)
     }
 
     func sendInfo(url:String,uploadTraffic:NSNumber,downloadFlow:NSNumber) {

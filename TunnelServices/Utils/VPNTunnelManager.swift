@@ -76,17 +76,17 @@ public class VPNTunnelManager: NSObject {
             }
             
             var configInfo = [String:Any]()
-            configInfo["port"] = 8034
-            configInfo["server"] = "127.0.0.1:8034"
-            configInfo["ip"] = "10.8.0.2"
-            configInfo["subnet"] = "255.255.255.0"
-            configInfo["mtu"] = "1400"
-            configInfo["dns"] = "8.8.8.8,8.4.4.4"
-            
+            configInfo["port"] = ProxyConfig.LocalProxy.port
+            configInfo["server"] = ProxyConfig.LocalProxy.endpoint
+            configInfo["ip"] = ProxyConfig.VPN.ipv4Address
+            configInfo["subnet"] = ProxyConfig.VPN.subnetMask
+            configInfo["mtu"] = "\(ProxyConfig.VPN.mtu)"
+            configInfo["dns"] = ProxyConfig.VPN.dnsServers
+
             let tunnelProviderProtocol = NETunnelProviderProtocol()
-            tunnelProviderProtocol.providerBundleIdentifier = "Lojii.NIO1901.PacketTunnel"
+            tunnelProviderProtocol.providerBundleIdentifier = ProxyConfig.extensionBundleIdentifier
             tunnelProviderProtocol.providerConfiguration = configInfo
-            tunnelProviderProtocol.serverAddress = "127.0.0.1:8034"
+            tunnelProviderProtocol.serverAddress = ProxyConfig.LocalProxy.endpoint
             
             self.vpnManager.protocolConfiguration = tunnelProviderProtocol
             self.vpnManager.localizedDescription = "NIO VPN"

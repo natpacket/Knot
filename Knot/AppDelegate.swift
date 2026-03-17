@@ -29,21 +29,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         ASConfigration.setDefaultDB(path: MitmService.getDBPath(), name: "Session")
         ASConfigration.logLevel = .error
         // Default Rule
-        if UserDefaults.standard.string(forKey: "first") == nil {
+        if UserDefaults.standard.string(forKey: PreferenceKeys.isFirstLaunch) == nil {
 //            Bugly.setUserValue("true", forKey: "IsFirst")
             let defaultRule = Rule.defaultRule()
             try? defaultRule.saveToDB()
             UserDefaults.standard.set("\(defaultRule.id ?? -1)", forKey: CurrentRuleId)
-            UserDefaults.standard.set("no first", forKey: "first")
+            UserDefaults.standard.set("no first", forKey: PreferenceKeys.isFirstLaunch)
             UserDefaults.standard.synchronize()
         }
         let fileManager = FileManager.default
         if let certDir = MitmService.getCertPath() {
             // Cert
-            let cacertPath = certDir.appendingPathComponent("cacert.pem", isDirectory: false)
-            let cacertDerPath = certDir.appendingPathComponent("cacert.der", isDirectory: false)
-            let cakeyPath = certDir.appendingPathComponent("cakey.pem", isDirectory: false)
-            let rsakeyPath = certDir.appendingPathComponent("rsakey.pem", isDirectory: false)
+            let cacertPath = certDir.appendingPathComponent(ProxyConfig.CertFiles.caCert, isDirectory: false)
+            let cacertDerPath = certDir.appendingPathComponent(ProxyConfig.CertFiles.caCertDER, isDirectory: false)
+            let cakeyPath = certDir.appendingPathComponent(ProxyConfig.CertFiles.caKey, isDirectory: false)
+            let rsakeyPath = certDir.appendingPathComponent(ProxyConfig.CertFiles.rsaKey, isDirectory: false)
 //            let cc = try? String(contentsOf: cacertPath)
             if !fileManager.fileExists(url: cacertPath) {
                 let fullCC = cc1 + cc2 + cc3
@@ -77,7 +77,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         try? fileManager.copyItem(at: bundleHttpPath, to: httpRootDir.appendingPathComponent("index.html"))
                     }
                 }
-                let cacertPath = httpRootDir.appendingPathComponent("cacert.pem", isDirectory: false)
+                let cacertPath = httpRootDir.appendingPathComponent(ProxyConfig.CertFiles.caCert, isDirectory: false)
                 if !fileManager.fileExists(url: cacertPath) {
                     let fullCC = cc1 + cc2 + cc3
                     let ccData = fullCC.data(using: .utf8)
@@ -86,14 +86,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }else{
                 do{
                     try fileManager.createDirectory(at: httpRootDir, withIntermediateDirectories: false, attributes: nil)
-                    
+
                     let httpPath = httpRootDir.appendingPathComponent("index.html")
                     if !fileManager.fileExists(url: httpPath) {
                         if let bundleHttpPath = Bundle.main.url(forResource: "Http/index", withExtension: "html") {
                             try? fileManager.copyItem(at: bundleHttpPath, to: httpRootDir.appendingPathComponent("index.html"))
                         }
                     }
-                    let cacertPath = httpRootDir.appendingPathComponent("cacert.pem", isDirectory: false)
+                    let cacertPath = httpRootDir.appendingPathComponent(ProxyConfig.CertFiles.caCert, isDirectory: false)
                     if !fileManager.fileExists(url: cacertPath) {
                         let fullCC = cc1 + cc2 + cc3
                         let ccData = fullCC.data(using: .utf8)

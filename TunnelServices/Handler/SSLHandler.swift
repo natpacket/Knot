@@ -126,7 +126,7 @@ class SSLHandler: ChannelInboundHandler,RemovableChannelHandler {
             }
             // issue:握手信息发出后，服务器验证未通过，失败未关闭channel
             // 添加ssl握手处理handler
-            let cancelHandshakeTask = context.channel.eventLoop.scheduleTask(in:  TimeAmount.seconds(10)) {
+            let cancelHandshakeTask = context.channel.eventLoop.scheduleTask(in:  TimeAmount.seconds(ProxyConfig.SSL.handshakeTimeout)) {
                 print("error:can not get server hello from MITM \(self.proxyContext.request?.host ?? "")")
                 self.proxyContext.session.note = "error:can not get server hello from MITM"
                 self.proxyContext.session.sstate = "failure"

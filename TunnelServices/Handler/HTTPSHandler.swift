@@ -86,7 +86,7 @@ class HTTPSHandler: ChannelInboundHandler, RemovableChannelHandler {
                 context.pipeline.removeHandler(name: "HTTPServerPipelineHandler", promise: nil)
                 context.pipeline.removeHandler(name: "HTTPSHandler", promise: nil)
                 // 添加ssl握手处理handler
-                let cancelTask = context.channel.eventLoop.scheduleTask(in:  TimeAmount.seconds(10)) {
+                let cancelTask = context.channel.eventLoop.scheduleTask(in:  TimeAmount.seconds(ProxyConfig.SSL.handshakeTimeout)) {
                     print( "error:can not get client hello from APP \(self.proxyContext.session.target ?? "") \(self.proxyContext.request?.host ?? "")")
                     self.proxyContext.session.note = "error:can not get client hello from APP \(self.proxyContext.session.target ?? "")"
                     self.proxyContext.session.sstate = "failure"

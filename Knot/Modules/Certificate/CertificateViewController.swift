@@ -87,7 +87,7 @@ class CertificateViewController: BaseViewController {
     
     func loadCert(){
         // 先检查是否安装证书
-        if let certPath = MitmService.getCertPath()?.appendingPathComponent("cacert.der"),
+        if let certPath = MitmService.getCertPath()?.appendingPathComponent(ProxyConfig.CertFiles.caCertDER),
             let certData = try? Data(contentsOf: certPath) {
             guard let cert = SecCertificateCreateWithData(nil, certData as CFData) else {
                 print("no cert file !")
@@ -181,7 +181,7 @@ extension CertificateViewController:CertViewDelegate {
     
     func certViewCertDidClick() {
         // 弹窗分享
-        if let certPath = MitmService.getCertPath()?.appendingPathComponent("cacert.der"){
+        if let certPath = MitmService.getCertPath()?.appendingPathComponent(ProxyConfig.CertFiles.caCertDER){
             VisualActivityViewController.share(file: certPath.absoluteString, on: self)
         }
     }

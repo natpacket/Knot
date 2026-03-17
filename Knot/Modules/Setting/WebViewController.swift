@@ -8,9 +8,10 @@
 
 import UIKit
 import WebKit
+import TunnelServices
 
 
-let ISAGREE = "isAgree"
+let ISAGREE = PreferenceKeys.isAgreedToTerms
 
 class WebViewController: BaseViewController,WKNavigationDelegate {
     

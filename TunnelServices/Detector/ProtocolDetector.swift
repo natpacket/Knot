@@ -29,7 +29,7 @@ public final class ProtocolDetector: ChannelInboundHandler, RemovableChannelHand
     
     public func channelRead(context: ChannelHandlerContext, data: NIOAny) {
         if let local = context.channel.localAddress?.description {
-            let isLocal = local.contains("127.0.0.1")
+            let isLocal = local.contains(ProxyConfig.LocalProxy.host)
             if (isLocal && task.localEnable == 0) || (!isLocal && task.wifiEnable == 0) {
                 context.flush()
                 context.close(promise: nil)

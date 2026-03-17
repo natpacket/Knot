@@ -41,7 +41,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
             mitmServer.run({ (result) in
                 switch result {
                 case .success( _):
-                    let endpoint = NWHostEndpoint(hostname:"127.0.0.1", port:"8034")
+                    let endpoint = NWHostEndpoint(hostname: ProxyConfig.LocalProxy.host, port: "\(ProxyConfig.LocalProxy.port)")
                     self.connection = self.createTCPConnection(to: endpoint, enableTLS:false, tlsParameters:nil, delegate:nil)
                     self.startVPNWithOptions(options: nil) { (error) in
                         if error == nil {
@@ -59,7 +59,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
                 }
             })
         } else {
-            let endpoint = NWHostEndpoint(hostname:"127.0.0.1", port:"8034")
+            let endpoint = NWHostEndpoint(hostname: ProxyConfig.LocalProxy.host, port: "\(ProxyConfig.LocalProxy.port)")
             self.connection = self.createTCPConnection(to: endpoint, enableTLS:false, tlsParameters:nil, delegate:nil)
             self.startVPNWithOptions(options: nil) { (error) in
                 if error == nil {
@@ -84,18 +84,18 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     }
 
     func startVPNWithOptions(options: [String : NSObject]?, completionHandler: @escaping (Error?) -> Void) {
-        let networkSettings = NEPacketTunnelNetworkSettings(tunnelRemoteAddress: "127.0.0.1")
-        networkSettings.mtu = 1500
+        let networkSettings = NEPacketTunnelNetworkSettings(tunnelRemoteAddress: ProxyConfig.VPN.tunnelAddress)
+        networkSettings.mtu = ProxyConfig.VPN.mtu
 
         let proxySettings = NEProxySettings()
-        proxySettings.httpServer = NEProxyServer(address: "127.0.0.1", port: 8034)
+        proxySettings.httpServer = NEProxyServer(address: ProxyConfig.LocalProxy.host, port: ProxyConfig.LocalProxy.port)
         proxySettings.httpEnabled = true
-        proxySettings.httpsServer = NEProxyServer(address: "127.0.0.1", port: 8034)
+        proxySettings.httpsServer = NEProxyServer(address: ProxyConfig.LocalProxy.host, port: ProxyConfig.LocalProxy.port)
         proxySettings.httpsEnabled = true
         proxySettings.matchDomains = [""]
         networkSettings.proxySettings = proxySettings
 
-        let ipv4Settings = NEIPv4Settings(addresses: ["192.169.89.1"], subnetMasks: ["255.255.255.0"])
+        let ipv4Settings = NEIPv4Settings(addresses: [ProxyConfig.VPN.ipv4Address], subnetMasks: [ProxyConfig.VPN.subnetMask])
         networkSettings.ipv4Settings = ipv4Settings
         setTunnelNetworkSettings(networkSettings) { (error) in
             completionHandler(error)

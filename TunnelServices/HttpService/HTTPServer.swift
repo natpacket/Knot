@@ -12,7 +12,7 @@ import NIOHTTP1
 import Network
 
 fileprivate let isDebug = false
-public let LocalHTTPServerChanged: NSNotification.Name = NSNotification.Name(rawValue: "LocalHTTPServerChanged")
+public let LocalHTTPServerChanged: NSNotification.Name = AppNotification.localHTTPServerChanged
 
 public class LocalHTTPServer {
 
@@ -21,8 +21,8 @@ public class LocalHTTPServer {
 
     public static let httpRootPath = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: GROUPNAME)?.appendingPathComponent("Root")
 
-    let defaultHost = "::1"
-    let defaultPort = 80
+    let defaultHost = ProxyConfig.HTTPServer.defaultHost
+    let defaultPort = ProxyConfig.HTTPServer.defaultPort
     let htdocs: String = LocalHTTPServer.httpRootPath?.absoluteString.components(separatedBy: "file://").last ?? ""
 
     let group = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount)

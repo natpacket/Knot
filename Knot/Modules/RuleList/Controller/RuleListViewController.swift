@@ -9,8 +9,8 @@
 import UIKit
 import TunnelServices
 
-let CurrentRuleListChange: NSNotification.Name = NSNotification.Name(rawValue: "CurrentRuleListChange")
-let CurrentSelectedRuleChanged: NSNotification.Name = NSNotification.Name(rawValue: "CurrentSelectedRuleChanged")
+let CurrentRuleListChange: NSNotification.Name = AppNotification.currentRuleListChange
+let CurrentSelectedRuleChanged: NSNotification.Name = AppNotification.currentSelectedRuleChanged
 
 class RuleListViewController: BaseViewController,PopupContentViewController {
 

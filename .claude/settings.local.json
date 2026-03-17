@@ -68,7 +68,8 @@
       "Bash(git stash:*)",
       "Bash(git ls-tree:*)",
       "Bash(grep -rn \"import NIOHTTP2\\\\|NIOHTTP2\" --include=*.swift TunnelServices/ Knot/)",
-      "Bash(ruby -e ':*)"
+      "Bash(ruby -e ':*)",
+      "Bash(find /Users/aa123/Documents/Knot -name \"*.swift\" -type f ! -path \"*Tests*\" ! -path \"*Lib/*\" ! -path \"*LocalPackages*\" -exec wc -l {} +)"
     ]
   }
 }

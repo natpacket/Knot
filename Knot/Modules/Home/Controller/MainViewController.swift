@@ -14,9 +14,9 @@ import UniformTypeIdentifiers
 import CocoaAsyncSocket
 import Network
 
-let HistoryTaskDidChanged: NSNotification.Name = NSNotification.Name(rawValue: "HistoryTaskDidChanged")
-let HidenKeyBoradNoti: NSNotification.Name = NSNotification.Name(rawValue: "HidenKeyBoradNoti")
-let NetWorkChangedNoti: NSNotification.Name = NSNotification.Name(rawValue: "NetWorkChangedNoti")
+let HistoryTaskDidChanged: NSNotification.Name = AppNotification.historyTaskDidChanged
+let HidenKeyBoradNoti: NSNotification.Name = AppNotification.hideKeyboard
+let NetWorkChangedNoti: NSNotification.Name = AppNotification.networkChanged
 
 
 
@@ -127,7 +127,7 @@ class MainViewController: BaseViewController {
         // UDP通讯
         udpSocket = GCDAsyncUdpSocket(delegate: self, delegateQueue: DispatchQueue.main)
         do{
-            try udpSocket?.bind(toPort: 60001)
+            try udpSocket?.bind(toPort: ProxyConfig.IPC.udpPort)
         }catch{
             print("udpSocket bind error:\(error.localizedDescription)")
         }

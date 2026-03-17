@@ -84,7 +84,7 @@ class SFNETunnelProviderManager:NETunnelProviderManager {
             
             let config = NETunnelProviderProtocol()
             config.providerConfiguration = configInfo
-            config.providerBundleIdentifier = "Lojii.NIO1901.PacketTunnel"
+            config.providerBundleIdentifier = ProxyConfig.extensionBundleIdentifier
             config.serverAddress = "Knot.Local"//"240.84.1.24"
             
             let manager = SFNETunnelProviderManager()

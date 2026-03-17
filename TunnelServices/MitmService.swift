@@ -13,8 +13,8 @@ import AxLogger
 
 
 public let StartInExtension = true
-public let GROUPNAME = "group.Lojii.NIO1901"
-public let CurrentRuleId = "CurrentRuleId"
+public let GROUPNAME = ProxyConfig.appGroupIdentifier
+public let CurrentRuleId = PreferenceKeys.currentRuleId
 
 /// 定义一个结构体类型的错误类型
 public struct ServerChannelError: Error {
@@ -77,7 +77,7 @@ public class MitmService: NSObject {
             .childChannelOption(ChannelOptions.socket(IPPROTO_TCP, TCP_NODELAY), value: 1)
             .childChannelOption(ChannelOptions.maxMessagesPerRead, value: 1)
             .childChannelOption(ChannelOptions.allowRemoteHalfClosure, value: false)
-            .childChannelOption(ChannelOptions.connectTimeout, value: TimeAmount.seconds(10))
+            .childChannelOption(ChannelOptions.connectTimeout, value: TimeAmount.seconds(ProxyConfig.SSL.connectTimeout))
         //
         wifiBootstrap = ServerBootstrap(group: master, childGroup: worker)
             .serverChannelOption(ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR), value: 1)
@@ -87,16 +87,16 @@ public class MitmService: NSObject {
             .childChannelOption(ChannelOptions.socket(IPPROTO_TCP, TCP_NODELAY), value: 1)
             .childChannelOption(ChannelOptions.maxMessagesPerRead, value: 1)
             .childChannelOption(ChannelOptions.allowRemoteHalfClosure, value: false)
-            .childChannelOption(ChannelOptions.connectTimeout, value: TimeAmount.seconds(10))
+            .childChannelOption(ChannelOptions.connectTimeout, value: TimeAmount.seconds(ProxyConfig.SSL.connectTimeout))
     }
     
     public static func prepare() -> MitmService? {
         // 数据库设置
-        ASConfigration.setDefaultDB(path: MitmService.getDBPath(), name: "Session")
+        ASConfigration.setDefaultDB(path: MitmService.getDBPath(), name: ProxyConfig.Database.sessionTableName)
         ASConfigration.logLevel = .error
         // 日志记录
         let directory = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: GROUPNAME)
-        if let tunnelDir = directory?.appendingPathComponent("Tunnel") {
+        if let tunnelDir = directory?.appendingPathComponent(ProxyConfig.Storage.tunnelLogFolder) {
             AxLogger.openLogging(tunnelDir, date: Date(),debug: true)
         }
         // 启动
@@ -292,7 +292,7 @@ public class MitmService: NSObject {
             task.wifiEnable = 1
             // 重新启动wifiServer
             DispatchQueue.global().async {
-                self.openWifiServer(ip: wifiIP, port: Int(truncating: self.task?.wifiPort ?? 8034)) { (r) in
+                self.openWifiServer(ip: wifiIP, port: Int(truncating: self.task?.wifiPort ?? NSNumber(value: ProxyConfig.LocalProxy.port))) { (r) in
                     try? self.task.update()
                     // TODO:发送更新信息
                     NSLog("网络切换，重新启动成功")

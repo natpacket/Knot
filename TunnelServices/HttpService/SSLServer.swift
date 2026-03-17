@@ -15,7 +15,7 @@ import _CryptoExtras
 import NIOConcurrencyHelpers
 
 fileprivate let isDebug = false
-fileprivate let SSLHost = "www.localhost.com"
+fileprivate let SSLHost = ProxyConfig.SSL.checkHost
 
 private final class EchoHandler: ChannelInboundHandler {
     public typealias InboundIn = ByteBuffer
@@ -107,17 +107,17 @@ public class LocalSSLServer {
     
     func loadCACert() -> Bool{
         guard let certDir = MitmService.getCertPath() else { return false }
-        let certPath = certDir.appendingPathComponent("cacert.pem", isDirectory: false).path.replacingOccurrences(of: "file://", with: "")
-        let keyPath = certDir.appendingPathComponent("cakey.pem", isDirectory: false).path.replacingOccurrences(of: "file://", with: "")
-        let rsaPath = certDir.appendingPathComponent("rsakey.pem", isDirectory: false).path.replacingOccurrences(of: "file://", with: "")
+        let certPath = certDir.appendingPathComponent(ProxyConfig.CertFiles.caCert, isDirectory: false).path.replacingOccurrences(of: "file://", with: "")
+        let keyPath = certDir.appendingPathComponent(ProxyConfig.CertFiles.caKey, isDirectory: false).path.replacingOccurrences(of: "file://", with: "")
+        let rsaPath = certDir.appendingPathComponent(ProxyConfig.CertFiles.rsaKey, isDirectory: false).path.replacingOccurrences(of: "file://", with: "")
 
         self.cacertPath = certPath
         self.rsakeyPath = rsaPath
 
         if let certDir = MitmService.getCertPath() {
-            let cacertPath = certDir.appendingPathComponent("cacert.pem", isDirectory: false)
-            let cakeyPath = certDir.appendingPathComponent("cakey.pem", isDirectory: false)
-            let rsakeyPath = certDir.appendingPathComponent("rsakey.pem", isDirectory: false)
+            let cacertPath = certDir.appendingPathComponent(ProxyConfig.CertFiles.caCert, isDirectory: false)
+            let cakeyPath = certDir.appendingPathComponent(ProxyConfig.CertFiles.caKey, isDirectory: false)
+            let rsakeyPath = certDir.appendingPathComponent(ProxyConfig.CertFiles.rsaKey, isDirectory: false)
             if let cert = try? NIOSSLCertificate(file: certPath, format: .pem) {
                 cacert = cert
             }else{
@@ -152,8 +152,8 @@ public class CheckCert {
     var checkCallBack:((TrustResultType) -> Void)!
     var sslServer:LocalSSLServer?
     var isEnd = false
-    let host: String = "::1"
-    let port: Int = 4433
+    let host: String = ProxyConfig.HTTPServer.defaultHost
+    let port: Int = ProxyConfig.SSL.checkPort
     
     public init() {
         
@@ -172,7 +172,7 @@ public class CheckCert {
     public func isTrust(_ callBack:@escaping (TrustResultType) -> Void){
         checkCallBack = callBack
         // 先检查是否安装证书
-        if let certPath = MitmService.getCertPath()?.appendingPathComponent("cacert.der"),
+        if let certPath = MitmService.getCertPath()?.appendingPathComponent(ProxyConfig.CertFiles.caCertDER),
             let certData = try? Data(contentsOf: certPath) {
             guard let cert = SecCertificateCreateWithData(nil, certData as CFData) else {
                 if isDebug { print("no cert file !") }
