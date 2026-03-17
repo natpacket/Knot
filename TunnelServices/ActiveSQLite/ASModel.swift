@@ -27,9 +27,9 @@ import SQLite
     @objc public var created_at:NSNumber = NSNumber(value:Date().timeIntervalSince1970 * 1000) //Create Time, ms
     @objc public var updated_at:NSNumber = NSNumber(value:Date().timeIntervalSince1970 * 1000) // Update Time，ms
     
-    public static var id = Expression<NSNumber>(PRIMARY_KEY)
-    public static var created_at = Expression<NSNumber>(CREATE_AT_KEY)
-    public static var updated_at = Expression<NSNumber>(UPDATE_AT_KEY)
+    public static var id = SQLExpression<NSNumber>(PRIMARY_KEY)
+    public static var created_at = SQLExpression<NSNumber>(CREATE_AT_KEY)
+    public static var updated_at = SQLExpression<NSNumber>(UPDATE_AT_KEY)
     
     public static var CREATE_AT_KEY:String = "created_at"
     public static var UPDATE_AT_KEY:String = "updated_at"
@@ -157,12 +157,12 @@ import SQLite
 //public extension ASModel{
 
 //MARK: - Generic Type
-//    func findAll<T:ASModel>(_ predicate: SQLite.Expression<Bool>, toT t:T)->Array<T>{
+//    func findAll<T:ASModel>(_ predicate: SQLExpression<Bool>, toT t:T)->Array<T>{
 //
-//        return findAll(Expression<Bool?>(predicate),toT:t)
+//        return findAll(SQLExpression<Bool?>(predicate),toT:t)
 //    }
 //
-//    func findAll<T:ASModel>(_ predicate: SQLite.Expression<Bool?>, toT t:T)->Array<T>{
+//    func findAll<T:ASModel>(_ predicate: SQLExpression<Bool?>, toT t:T)->Array<T>{
 //
 //        var results:[T] = [T]()
 //
@@ -188,7 +188,7 @@ import SQLite
 //        return results
 //    }
 //
-//    func findAll<T:ASModel>(_ predicate: SQLite.Expression<Bool?>)->Array<T>{
+//    func findAll<T:ASModel>(_ predicate: SQLExpression<Bool?>)->Array<T>{
 //
 //        var results:[T] = [T]()
 //
@@ -215,7 +215,7 @@ import SQLite
 //        return results
 //    }
 
-//    internal func findAll<T:ASModel>(_ predicate: SQLite.Expression<Bool?>) -> [T] where T : ASModel{
+//    internal func findAll<T:ASModel>(_ predicate: SQLExpression<Bool?>) -> [T] where T : ASModel{
 //
 //        var results:[T] = [T]()
 //

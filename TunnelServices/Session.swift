@@ -1,6 +1,6 @@
 //
 //  Session.swift
-//  NIO1901
+//  Knot
 //
 //  Created by LiuJie on 2019/4/24.
 //  Copyright © 2019 Lojii. All rights reserved.
@@ -177,7 +177,7 @@ public class Session: ASModel {
     
     
     // func
-    public static func newSession(_ task:Task) -> Session {
+    public static func newSession(_ task:CaptureTask) -> Session {
         let  session = Session()
         session.taskID = task.id
         session.startTime = NSNumber(value: Date().timeIntervalSince1970)

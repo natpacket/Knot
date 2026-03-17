@@ -9,6 +9,9 @@
 import Foundation
 import SQLite
 
+// Resolve 'Expression' ambiguity with Swift 5.9+ (Swift macros introduce Expression type)
+public typealias SQLExpression = SQLite.Expression
+
 public  func save(db:Connection? = nil, _ block: @escaping ()throws -> Void,
                         completion: ((_ error:Error?)->Void)? = nil) -> Void  {
     

@@ -63,73 +63,73 @@ extension Setter{
         switch mir.subjectType {
             
         case _ as String.Type:
-            return (Expression<String>(key) <- value as! String)
+            return (SQLExpression<String>(key) <- value as! String)
             
         case _ as String?.Type:
             if let v = value as? String {
-                return (Expression<String?>(key) <- v)
+                return (SQLExpression<String?>(key) <- v)
             }else{
-                return (Expression<String?>(key) <- nil)
+                return (SQLExpression<String?>(key) <- nil)
             }
         
 //        case _ as Int64.Type:
-//            return (Expression<Int64>(key) <- value as! Int64)
+//            return (SQLExpression<Int64>(key) <- value as! Int64)
 //
 //        case _ as Int64?.Type:
 //            if let v = value as? Int64 {
-//                return (Expression<Int64?>(key) <- v)
+//                return (SQLExpression<Int64?>(key) <- v)
 //            }else{
-//                return (Expression<Int64?>(key) <- nil)
+//                return (SQLExpression<Int64?>(key) <- nil)
 //            }
 //
 //        case _ as Int.Type:
-//            return (Expression<Int>(key) <- value as! Int)
+//            return (SQLExpression<Int>(key) <- value as! Int)
 //
 //        case _ as Int?.Type:
 //            if let v = value as? Int {
-//                return (Expression<Int?>(key) <- v)
+//                return (SQLExpression<Int?>(key) <- v)
 //            }else{
-//                return (Expression<Int?>(key) <- nil)
+//                return (SQLExpression<Int?>(key) <- nil)
 //            }
 //
 //        case _ as Double.Type:
-//            return (Expression<Double>(key) <- value as! Double)
+//            return (SQLExpression<Double>(key) <- value as! Double)
 //
 //        case _ as Double?.Type:
 //            if let v = value as? Double {
-//                return (Expression<Double?>(key) <- v)
+//                return (SQLExpression<Double?>(key) <- v)
 //            }else{
-//                return (Expression<Double?>(key) <- nil)
+//                return (SQLExpression<Double?>(key) <- nil)
 //            }
 
         case _ as Date.Type:
-            return (Expression<Date>(key) <- value as! Date)
+            return (SQLExpression<Date>(key) <- value as! Date)
             
         case _ as Date?.Type:
             if let v = value as? Date {
-                return (Expression<Date?>(key) <- v)
+                return (SQLExpression<Date?>(key) <- v)
             }else{
-                return (Expression<Date?>(key) <- nil)
+                return (SQLExpression<Date?>(key) <- nil)
             }
             
         case _ as NSNumber.Type:
-            return (Expression<NSNumber>(key) <- value as! NSNumber)
+            return (SQLExpression<NSNumber>(key) <- value as! NSNumber)
             
         case _ as NSNumber?.Type:
             if let v = value as? NSNumber {
-                return (Expression<NSNumber?>(key) <- v)
+                return (SQLExpression<NSNumber?>(key) <- v)
             }else{
-                return (Expression<NSNumber?>(key) <- nil)
+                return (SQLExpression<NSNumber?>(key) <- nil)
             }
             
         case _ as NSDate.Type:
-            return (Expression<NSDate>(key) <- value as! NSDate)
+            return (SQLExpression<NSDate>(key) <- value as! NSDate)
         case _ as NSDate?.Type:
             
             if let v = value as? NSDate {
-                return (Expression<NSDate?>(key) <- v)
+                return (SQLExpression<NSDate?>(key) <- v)
             }else{
-                return (Expression<NSDate?>(key) <- nil)
+                return (SQLExpression<NSDate?>(key) <- nil)
             }
             
         default:
@@ -138,47 +138,47 @@ extension Setter{
     }
 }
 
-extension Expression{
-    static func generate(key:String,type:Any,value:Any?) -> SQLite.Expression<Bool?>?{
+extension SQLExpression{
+    static func generate(key:String,type:Any,value:Any?) -> SQLExpression<Bool?>?{
         let mir = Mirror(reflecting:type)
         
         switch mir.subjectType {
             
         case _ as String.Type:
-            return (Expression<Bool?>(Expression<String>(key) == value as! String))
+            return (SQLExpression<Bool?>(SQLExpression<String>(key) == value as! String))
         case _ as String?.Type:
-            return (Expression<String?>(key) == value as! String?)
+            return (SQLExpression<String?>(key) == value as! String?)
         
 //        case _ as Int64.Type:
-//            return (Expression<Bool?>(Expression<Int64>(key) == value as! Int64))
+//            return (SQLExpression<Bool?>(SQLExpression<Int64>(key) == value as! Int64))
 //        case _ as Int64?.Type:
-//            return (Expression<Int64?>(key) == value as! Int64?)
+//            return (SQLExpression<Int64?>(key) == value as! Int64?)
 //            
 //        case _ as Int.Type:
-//            return (Expression<Bool?>(Expression<Int>(key) == value as! Int))
+//            return (SQLExpression<Bool?>(SQLExpression<Int>(key) == value as! Int))
 //        case _ as Int?.Type:
-//            return (Expression<Int?>(key) == value as! Int?)
+//            return (SQLExpression<Int?>(key) == value as! Int?)
 //            
 //        case _ as Double.Type:
-//            return (Expression<Bool?>(Expression<Double>(key) == value as! Double))
+//            return (SQLExpression<Bool?>(SQLExpression<Double>(key) == value as! Double))
 //        case _ as Double?.Type:
-//            return (Expression<Double?>(key) == value as! Double?)
+//            return (SQLExpression<Double?>(key) == value as! Double?)
 //            
 //        case _ as Date.Type:
-//            return (Expression<Bool?>(Expression<Date>(key) == value as! Date))
+//            return (SQLExpression<Bool?>(SQLExpression<Date>(key) == value as! Date))
 //        case _ as Date?.Type:
-//            return (Expression<Date?>(key) == value as! Date?)
+//            return (SQLExpression<Date?>(key) == value as! Date?)
             
             
         case _ as NSNumber.Type:
-            return (Expression<Bool?>(Expression<NSNumber>(key) == value as! NSNumber))
+            return (SQLExpression<Bool?>(SQLExpression<NSNumber>(key) == value as! NSNumber))
         case _ as NSNumber?.Type:
-            return (Expression<NSNumber?>(key) == value as? NSNumber)
+            return (SQLExpression<NSNumber?>(key) == value as? NSNumber)
             
         case _ as NSDate.Type:
-            return (Expression<Bool?>(Expression<NSDate>(key) == value as! NSDate))
+            return (SQLExpression<Bool?>(SQLExpression<NSDate>(key) == value as! NSDate))
         case _ as NSDate?.Type:
-            return (Expression<NSDate?>(key) == value as! NSDate?)
+            return (SQLExpression<NSDate?>(key) == value as! NSDate?)
             
         default:
             return nil

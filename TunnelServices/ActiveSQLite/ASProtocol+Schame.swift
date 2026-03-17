@@ -54,7 +54,7 @@ public extension ASProtocol where Self:ASModel{
             
             //check primaryKey
             if attribute == primaryKeyAttributeName {
-                t.column(Expression<NSNumber>(column), primaryKey: .autoincrement)
+                t.column(SQLExpression<NSNumber>(column), primaryKey: .autoincrement)
                 continue
             }
             
@@ -63,21 +63,21 @@ public extension ASProtocol where Self:ASModel{
             switch mir.subjectType {
                 
             case _ as String.Type:
-                t.column(Expression<String>(column), defaultValue: "")
+                t.column(SQLExpression<String>(column), defaultValue: "")
             case _ as String?.Type:
-                t.column(Expression<String?>(column))
+                t.column(SQLExpression<String?>(column))
                 
                 
             case _ as NSNumber.Type:
                 
                 if doubleTypes().contains(attribute) {
-                    t.column(Expression<Double>(column), defaultValue: 0.0)
+                    t.column(SQLExpression<Double>(column), defaultValue: 0.0)
                 }else{
                     
                     if attribute == primaryKeyAttributeName {
-                        t.column(Expression<NSNumber>(column), primaryKey: .autoincrement)
+                        t.column(SQLExpression<NSNumber>(column), primaryKey: .autoincrement)
                     }else{
-                        t.column(Expression<NSNumber>(column), defaultValue: 0)
+                        t.column(SQLExpression<NSNumber>(column), defaultValue: 0)
                     }
                     
                 }
@@ -85,15 +85,15 @@ public extension ASProtocol where Self:ASModel{
             case _ as NSNumber?.Type:
                 
                 if doubleTypes().contains(attribute) {
-                    t.column(Expression<Double?>(column))
+                    t.column(SQLExpression<Double?>(column))
                 }else{
-                    t.column(Expression<NSNumber?>(column))
+                    t.column(SQLExpression<NSNumber?>(column))
                 }
                 
             case _ as NSDate.Type:
-                t.column(Expression<NSDate>(column), defaultValue: NSDate(timeIntervalSince1970: 0))
+                t.column(SQLExpression<NSDate>(column), defaultValue: NSDate(timeIntervalSince1970: 0))
             case _ as NSDate?.Type:
-                t.column(Expression<NSDate?>(column))
+                t.column(SQLExpression<NSDate?>(column))
                 
             default: break
                 
@@ -161,21 +161,21 @@ public extension ASProtocol where Self:ASModel{
             switch mir.subjectType {
                 
             case _ as String.Type:
-                return t.addColumn(Expression<String>(column), defaultValue: "")
+                return t.addColumn(SQLExpression<String>(column), defaultValue: "")
             case _ as String?.Type:
-                return t.addColumn(Expression<String?>(column))
+                return t.addColumn(SQLExpression<String?>(column))
                 
                 
             case _ as NSNumber.Type:
                 
                 if doubleTypes().contains(attribute) {
-                    return t.addColumn(Expression<Double>(column), defaultValue: 0.0)
+                    return t.addColumn(SQLExpression<Double>(column), defaultValue: 0.0)
                 }else{
                     
                     //                    if key == primaryKeyAttributeName {
-                    //                        return t.addColumn(Expression<NSNumber>(key), primaryKey: .autoincrement)
+                    //                        return t.addColumn(SQLExpression<NSNumber>(key), primaryKey: .autoincrement)
                     //                    }else{
-                    return t.addColumn(Expression<NSNumber>(column), defaultValue: 0)
+                    return t.addColumn(SQLExpression<NSNumber>(column), defaultValue: 0)
                     //                    }
                     
                 }
@@ -183,15 +183,15 @@ public extension ASProtocol where Self:ASModel{
             case _ as NSNumber?.Type:
                 
                 if doubleTypes().contains(attribute) {
-                    return t.addColumn(Expression<Double?>(column))
+                    return t.addColumn(SQLExpression<Double?>(column))
                 }else{
-                    return t.addColumn(Expression<NSNumber?>(column))
+                    return t.addColumn(SQLExpression<NSNumber?>(column))
                 }
                 
             case _ as NSDate.Type:
-                return t.addColumn(Expression<NSDate>(column), defaultValue: NSDate(timeIntervalSince1970: 0))
+                return t.addColumn(SQLExpression<NSDate>(column), defaultValue: NSDate(timeIntervalSince1970: 0))
             case _ as NSDate?.Type:
-                return t.addColumn(Expression<NSDate?>(column))
+                return t.addColumn(SQLExpression<NSDate?>(column))
                 
             default:
                 return nil

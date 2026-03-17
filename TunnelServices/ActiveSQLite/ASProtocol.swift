@@ -14,7 +14,7 @@ public protocol ASProtocol:class {
 //    static var db:Connection{get}
 //    //'public' modifier cannot be used in protocols
 //    static var CREATE_AT_KEY:String{get}
-//    static var created_at:Expression<NSNumber>{get}
+//    static var created_at:SQLExpression<NSNumber>{get}
 //
 //    static var isSaveDefaulttimestamp:Bool{get}
 //    static var nameOfTable: String{get}
@@ -22,7 +22,7 @@ public protocol ASProtocol:class {
     
 //    init()
     //default argument not permitted in protocol method
-//    static func findAllinAS(_ predicate: SQLite.Expression<Bool?>?,orders: [Expressible]?)->Array<ASModel>
+//    static func findAllinAS(_ predicate: SQLExpression<Bool?>?,orders: [Expressible]?)->Array<ASModel>
 }
 
 public extension ASProtocol where Self:ASModel{
@@ -46,8 +46,8 @@ public extension ASProtocol where Self:ASModel{
 //    public static var CREATE_AT_KEY:String{
 //        return  "created_at"
 //    }
-//    public static var created_at:Expression<NSNumber>{
-//        return Expression<Int64>(CREATE_AT_KEY)
+//    public static var created_at:SQLExpression<NSNumber>{
+//        return SQLExpression<Int64>(CREATE_AT_KEY)
 //    }
 //
 //    public static var isSaveDefaulttimestamp:Bool {

@@ -39,7 +39,7 @@ class HttpMatcher: ProtocolMatcher {
         return ProtocolMatcher.MISMATCH
     }
     
-    override func handlePipeline(pipleline: ChannelPipeline, task:Task) {
+    override func handlePipeline(pipleline: ChannelPipeline, task:CaptureTask) {
         let pc = ProxyContext(isHttp:true, task:task)
         pc.session.schemes = "Http"
         _ = pipleline.configureHTTPServerPipeline()

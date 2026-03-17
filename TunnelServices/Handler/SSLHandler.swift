@@ -1,6 +1,6 @@
 //
 //  SSLHandler.swift
-//  NIO1901
+//  Knot
 //
 //  Created by LiuJie on 2019/4/17.
 //  Copyright © 2019 Lojii. All rights reserved.
@@ -72,23 +72,58 @@ class SSLHandler: ChannelInboundHandler,RemovableChannelHandler {
 //                _ = context.channel.close()
 //                return
 //            }
-            let cert = proxyContext.task.cacert
-            let caPriKey = proxyContext.task.cakey
-            let rsaKey = proxyContext.task.rsakey
-            if cert == nil || caPriKey == nil || rsaKey == nil {
+            guard let rsaKey = proxyContext.task.rsakey,
+                  let x509CACert = proxyContext.task.x509CACert,
+                  let rsaSigningKey = proxyContext.task.rsaSigningKey else {
                 AxLogger.log("证书为空！！！", level: .Error)
+                proxyContext.session.sstate = "failure"
+                proxyContext.session.note = "error:Certificate or key is nil"
+                _ = context.channel.close()
+                return
             }
-            // 通过CA证书给域名动态签发证书
-            let host = proxyContext.request!.host
-            var dynamicCert = proxyContext.task.certPool[host]
-            if dynamicCert == nil {
-                dynamicCert = CertUtils.generateCert(host: host,rsaKey: rsaKey!, caKey: caPriKey!, caCert: cert!)
-//                proxyContext.task.certPool[host] = dynamicCert
-                proxyContext.task.certPool.setValue(dynamicCert, forKey: host)
+            guard let request = proxyContext.request else {
+                AxLogger.log("request is nil in SSLHandler", level: .Error)
+                _ = context.channel.close()
+                return
             }
-            let tlsServerConfiguration = TLSConfiguration.forServer(certificateChain: [.certificate(dynamicCert! as! NIOSSLCertificate)], privateKey: .privateKey(rsaKey!))
-            let sslServerContext = try! NIOSSLContext(configuration: tlsServerConfiguration)
-            let sslServerHandler = try! NIOSSLServerHandler(context: sslServerContext)
+            let host = request.host
+            // 通过 CA 证书给域名动态签发证书 (pure Swift)
+            var niosslCert = proxyContext.task.certPool[host]
+            if niosslCert == nil {
+                do {
+                    let x509Cert = try CertGenerator.generateCert(
+                        host: host, rsaKey: rsaSigningKey, caKey: rsaSigningKey, caCert: x509CACert
+                    )
+                    niosslCert = try CertGenerator.toNIOSSL(x509Cert)
+                    if let c = niosslCert {
+                        proxyContext.task.certPool.set(c, forKey: host)
+                    }
+                } catch {
+                    AxLogger.log("Failed to generate cert for \(host): \(error)", level: .Error)
+                }
+            }
+            guard let finalCert = niosslCert else {
+                AxLogger.log("Failed to generate dynamic cert for \(host)", level: .Error)
+                proxyContext.session.sstate = "failure"
+                proxyContext.session.note = "error:Failed to generate certificate for \(host)"
+                _ = context.channel.close()
+                return
+            }
+            let tlsServerConfiguration = TLSConfiguration.forServer(certificateChain: [.certificate(finalCert)], privateKey: .privateKey(rsaKey))
+            guard let sslServerContext = try? NIOSSLContext(configuration: tlsServerConfiguration) else {
+                AxLogger.log("Failed to create NIOSSLContext for \(host)", level: .Error)
+                proxyContext.session.sstate = "failure"
+                proxyContext.session.note = "error:Failed to create SSL context for \(host)"
+                _ = context.channel.close()
+                return
+            }
+            guard let sslServerHandler = try? NIOSSLServerHandler(context: sslServerContext) else {
+                AxLogger.log("Failed to create NIOSSLServerHandler for \(host)", level: .Error)
+                proxyContext.session.sstate = "failure"
+                proxyContext.session.note = "error:Failed to create SSL handler for \(host)"
+                _ = context.channel.close()
+                return
+            }
             // issue:握手信息发出后，服务器验证未通过，失败未关闭channel
             // 添加ssl握手处理handler
             let cancelHandshakeTask = context.channel.eventLoop.scheduleTask(in:  TimeAmount.seconds(10)) {

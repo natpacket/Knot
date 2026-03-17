@@ -182,24 +182,24 @@ extension UIImage: Value {
 }
 
 extension Query {
-    subscript(column: Expression<UIImage>) -> Expression<UIImage> {
+    subscript(column: SQLExpression<UIImage>) -> SQLExpression<UIImage> {
         return namespace(column)
     }
-    subscript(column: Expression<UIImage?>) -> Expression<UIImage?> {
+    subscript(column: SQLExpression<UIImage?>) -> SQLExpression<UIImage?> {
         return namespace(column)
     }
 }
 
 extension Row {
-    subscript(column: Expression<UIImage>) -> UIImage {
+    subscript(column: SQLExpression<UIImage>) -> UIImage {
         return get(column)
     }
-    subscript(column: Expression<UIImage?>) -> UIImage? {
+    subscript(column: SQLExpression<UIImage?>) -> UIImage? {
         return get(column)
     }
 }
 
-let avatar = Expression<UIImage?>("avatar")
+let avatar = SQLExpression<UIImage?>("avatar")
 users[avatar]           // failed to compile
 users.namespace(avatar) // "users"."avatar"
 

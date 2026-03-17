@@ -1,6 +1,6 @@
 //
 //  OtherItem.swift
-//  NIO1901
+//  Knot
 //
 //  Created by LiuJie on 2019/6/10.
 //  Copyright © 2019 Lojii. All rights reserved.

@@ -21,6 +21,6 @@ class ProtocolMatcher {
     public func match(buf:ByteBuffer) -> Int {return -1}
     
     //Deal with the pipeline when matched
-    public func handlePipeline(pipleline:ChannelPipeline, task:Task) -> Void {}
+    public func handlePipeline(pipleline:ChannelPipeline, task:CaptureTask) -> Void {}
     
 }

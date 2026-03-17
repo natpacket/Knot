@@ -1,6 +1,6 @@
 //
 //  SSLMatcher.swift
-//  NIO1901
+//  Knot
 //
 //  Created by LiuJie on 2019/4/14.
 //  Copyright © 2019 Lojii. All rights reserved.
@@ -66,7 +66,7 @@ class SSLMatcher: ProtocolMatcher {
         return ProtocolMatcher.MISMATCH
     }
     
-    override func handlePipeline(pipleline: ChannelPipeline, task:Task) {
+    override func handlePipeline(pipleline: ChannelPipeline, task:CaptureTask) {
         let ppp = ProxyContext(isHttp: false, task: task)
         _ = pipleline.addHandler(ChannelWatchHandler(proxyContext: ppp), name: "ChannelWatchHandler", position: .first)
 //        _ = pipleline.addHandler(SSLHandler(proxyContext: ppp), name: "SSLDetector", position: .last)

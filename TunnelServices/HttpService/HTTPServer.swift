@@ -9,50 +9,44 @@
 import UIKit
 import NIO
 import NIOHTTP1
-import Reachability
+import Network
 
 fileprivate let isDebug = false
 public let LocalHTTPServerChanged: NSNotification.Name = NSNotification.Name(rawValue: "LocalHTTPServerChanged")
 
 public class LocalHTTPServer {
-    
-    let reachability = try! Reachability()
-    
+
+    private let pathMonitor = NWPathMonitor()
+    private let monitorQueue = DispatchQueue(label: "com.knot.httpserver.network")
+
     public static let httpRootPath = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: GROUPNAME)?.appendingPathComponent("Root")
-    
+
     let defaultHost = "::1"
     let defaultPort = 80
     let htdocs: String = LocalHTTPServer.httpRootPath?.absoluteString.components(separatedBy: "file://").last ?? ""
-    
+
     let group = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount)
-    var threadPool:NIOThreadPool?
-    
-    var channel:Channel?
-    var wifiChannel:Channel?
-    
+    var threadPool: NIOThreadPool?
+
+    var channel: Channel?
+    var wifiChannel: Channel?
+
     public init() {
-        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(note:)), name: .reachabilityChanged, object: reachability)
-        
-    }
-    
-    @objc func reachabilityChanged(note: Notification) {
-        let reachability = note.object as! Reachability
-        switch reachability.connection {
-        case .wifi:
-            runWifiAgain()
-        case .cellular,.none:
-            closeWifi()
-        default:
-            break;
+        pathMonitor.pathUpdateHandler = { [weak self] path in
+            guard let self = self else { return }
+            if path.usesInterfaceType(.wifi) {
+                self.runWifiAgain()
+            } else {
+                self.closeWifi()
+            }
         }
     }
-    
+
     deinit {
         if isDebug { print("LocalHTTPServer Deinit !") }
-        reachability.stopNotifier()
-        NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
+        pathMonitor.cancel()
     }
-    
+
     func newBootstrap() -> ServerBootstrap {
         let fileIO = NonBlockingFileIO(threadPool: threadPool!)
         let bootstrap = ServerBootstrap(group: group)
@@ -69,10 +63,10 @@ public class LocalHTTPServer {
             .childChannelOption(ChannelOptions.allowRemoteHalfClosure, value: true)
         return bootstrap
     }
-    
+
     func runWifi(){
         let bootstrap = newBootstrap()
-        
+
         let wifiIP = NetworkInfo.LocalWifiIPv4()
         if wifiIP != "" {
             DispatchQueue.global().async {
@@ -95,9 +89,9 @@ public class LocalHTTPServer {
             }
         }
     }
-    
+
     func runLocal(){
-        let bootstrap =  newBootstrap()
+        let bootstrap = newBootstrap()
         DispatchQueue.global().async {
             do {
                 self.channel = try bootstrap.bind(host: self.defaultHost, port: self.defaultPort).wait()
@@ -117,9 +111,8 @@ public class LocalHTTPServer {
             if isDebug { print("HTTPServer(Local):Server closed") }
         }
     }
-    
+
     public func run(){
-        // TODO:监听网络变化
         threadPool = NIOThreadPool(numberOfThreads: 6)
         threadPool?.start()
         if threadPool == nil {
@@ -127,28 +120,24 @@ public class LocalHTTPServer {
             return
         }
         if isDebug { print("LocalHTTPServer root :\(htdocs)") }
-        do{
-            try reachability.startNotifier()
-        }catch{
-            print("could not start reachability notifier")
-        }
-        
+        pathMonitor.start(queue: monitorQueue)
         runLocal()
     }
-    
+
     func closeWifi(){
         if wifiChannel != nil {
             try? wifiChannel?.close().wait()
             wifiChannel = nil
         }
     }
-    
+
     func runWifiAgain(){
         closeWifi()
         runWifi()
     }
-    
+
     public func close(){
+        pathMonitor.cancel()
         channel?.close(mode: .all, promise: nil)
         wifiChannel?.close(mode: .all, promise: nil)
         do {

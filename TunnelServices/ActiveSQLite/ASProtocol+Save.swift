@@ -90,7 +90,7 @@ public extension ASProtocol where Self:ASModel{
                     }
                     
                     if model.id != nil {
-                        settersInsert.append(Expression<NSNumber>(PRIMARY_KEY) <- model.id!)
+                        settersInsert.append(SQLExpression<NSNumber>(PRIMARY_KEY) <- model.id!)
                     }
                     
                     let rowid = try self.getDB().run(getTable().insert(settersInsert))
@@ -262,20 +262,20 @@ public extension ASProtocol where Self:ASModel{
     }
     
     //MARK: - Update more than one by where
-    //    static func update(_ setters:Setter...,`where` predicate: SQLite.Expression<Bool>)throws{
-    //        try update(setters, where: Expression<Bool?>(predicate))
+    //    static func update(_ setters:Setter...,`where` predicate: SQLExpression<Bool>)throws{
+    //        try update(setters, where: SQLExpression<Bool?>(predicate))
     //    }
     
-    static func update(_ setters:[Setter],`where` predicate: SQLite.Expression<Bool>)throws{
-        try update(setters, where: Expression<Bool?>(predicate))
+    static func update(_ setters:[Setter],`where` predicate: SQLExpression<Bool>)throws{
+        try update(setters, where: SQLExpression<Bool?>(predicate))
     }
     
-    //    static func update(_ setters:Setter...,`where` predicate: SQLite.Expression<Bool?>)throws{
+    //    static func update(_ setters:Setter...,`where` predicate: SQLExpression<Bool?>)throws{
     //        try update(setters, where: predicate)
     //
     //    }
     
-    static func update(_ setters:[Setter],`where` predicate: SQLite.Expression<Bool?>)throws{
+    static func update(_ setters:[Setter],`where` predicate: SQLExpression<Bool?>)throws{
         do {
             
             
@@ -388,13 +388,13 @@ public extension ASProtocol where Self:ASModel{
             switch mir.subjectType {
                 
             case _ as String.Type:
-                setters.append(Expression<String>(column) <- value as! String)
+                setters.append(SQLExpression<String>(column) <- value as! String)
             case _ as String?.Type:
                 
                 if let v = value as? String {
-                    setters.append(Expression<String?>(column) <- v)
+                    setters.append(SQLExpression<String?>(column) <- v)
                 }else{
-                    setters.append(Expression<String?>(column) <- nil)
+                    setters.append(SQLExpression<String?>(column) <- nil)
                 }
                 
                 
@@ -402,35 +402,35 @@ public extension ASProtocol where Self:ASModel{
             case _ as NSNumber.Type:
                 
                 if self.doubleTypes().contains(attribute) {
-                    setters.append(Expression<Double>(column) <- value as! Double)
+                    setters.append(SQLExpression<Double>(column) <- value as! Double)
                 }else{
-                    setters.append(Expression<NSNumber>(column) <- value as! NSNumber)
+                    setters.append(SQLExpression<NSNumber>(column) <- value as! NSNumber)
                 }
                 
             case _ as NSNumber?.Type:
                 
                 if self.doubleTypes().contains(attribute) {
                     if let v = value as? Double {
-                        setters.append(Expression<Double?>(column) <- v)
+                        setters.append(SQLExpression<Double?>(column) <- v)
                     }else{
-                        setters.append(Expression<Double?>(column) <- nil)
+                        setters.append(SQLExpression<Double?>(column) <- nil)
                     }
                 }else{
                     if let v = value as? NSNumber {
-                        setters.append(Expression<NSNumber?>(column) <- v)
+                        setters.append(SQLExpression<NSNumber?>(column) <- v)
                     }else{
-                        setters.append(Expression<NSNumber?>(column) <- nil)
+                        setters.append(SQLExpression<NSNumber?>(column) <- nil)
                     }
                 }
                 
             case _ as NSDate.Type:
-                setters.append(Expression<NSDate>(column) <- value as! NSDate)
+                setters.append(SQLExpression<NSDate>(column) <- value as! NSDate)
             case _ as NSDate?.Type:
                 
                 if let v = value as? NSDate {
-                    setters.append(Expression<NSDate?>(column) <- v)
+                    setters.append(SQLExpression<NSDate?>(column) <- v)
                 }else{
-                    setters.append(Expression<NSDate?>(column) <- nil)
+                    setters.append(SQLExpression<NSDate?>(column) <- nil)
                 }
                 
             default: break
@@ -465,13 +465,13 @@ public extension ASProtocol where Self:ASModel{
                 switch mir.subjectType {
                     
                 case _ as String.Type:
-                    setters.append(Expression<String>(column) <- value as! String)
+                    setters.append(SQLExpression<String>(column) <- value as! String)
                 case _ as String?.Type:
                     
                     if let v = value as? String {
-                        setters.append(Expression<String?>(column) <- v)
+                        setters.append(SQLExpression<String?>(column) <- v)
                     }else{
-                        setters.append(Expression<String?>(column) <- nil)
+                        setters.append(SQLExpression<String?>(column) <- nil)
                     }
                     
                     
@@ -479,35 +479,35 @@ public extension ASProtocol where Self:ASModel{
                 case _ as NSNumber.Type:
                     
                     if self.doubleTypes().contains(attribute) {
-                        setters.append(Expression<Double>(column) <- value as! Double)
+                        setters.append(SQLExpression<Double>(column) <- value as! Double)
                     }else{
-                        setters.append(Expression<NSNumber>(column) <- value as! NSNumber)
+                        setters.append(SQLExpression<NSNumber>(column) <- value as! NSNumber)
                     }
                     
                 case _ as NSNumber?.Type:
                     
                     if self.doubleTypes().contains(attribute) {
                         if let v = value as? Double {
-                            setters.append(Expression<Double?>(column) <- v)
+                            setters.append(SQLExpression<Double?>(column) <- v)
                         }else{
-                            setters.append(Expression<Double?>(column) <- nil)
+                            setters.append(SQLExpression<Double?>(column) <- nil)
                         }
                     }else{
                         if let v = value as? NSNumber {
-                            setters.append(Expression<NSNumber?>(column) <- v)
+                            setters.append(SQLExpression<NSNumber?>(column) <- v)
                         }else{
-                            setters.append(Expression<NSNumber?>(column) <- nil)
+                            setters.append(SQLExpression<NSNumber?>(column) <- nil)
                         }
                     }
                     
                 case _ as NSDate.Type:
-                    setters.append(Expression<NSDate>(column) <- value as! NSDate)
+                    setters.append(SQLExpression<NSDate>(column) <- value as! NSDate)
                 case _ as NSDate?.Type:
                     
                     if let v = value as? NSDate {
-                        setters.append(Expression<NSDate?>(column) <- v)
+                        setters.append(SQLExpression<NSDate?>(column) <- v)
                     }else{
-                        setters.append(Expression<NSDate?>(column) <- nil)
+                        setters.append(SQLExpression<NSDate?>(column) <- nil)
                     }
                     
                 default: break
@@ -546,17 +546,17 @@ public extension ASProtocol where Self:ASModel{
                 let mir = Mirror(reflecting:setterValue ?? 0.0)
                 switch mir.subjectType {
                 case _ as NSNumber.Type:
-                    return Expression<Double>(column) <- setterValue as! Double
+                    return SQLExpression<Double>(column) <- setterValue as! Double
                 case _ as NSNumber?.Type:
                     if let v = setterValue as? Double {
-                        return Expression<Double?>(column) <- v
+                        return SQLExpression<Double?>(column) <- v
                     }else{
-                        return Expression<Double?>(column) <- nil
+                        return SQLExpression<Double?>(column) <- nil
                     }
                 default:break
                 }
                 return setter //the double type that originSetters contains is NSNumber. return origin setter
-                //                return Expression<Double?>(column) <- nil
+                //                return SQLExpression<Double?>(column) <- nil
             }else{
                 return setter
             }

@@ -13,16 +13,16 @@ import SQLite
 public extension ASProtocol where Self:ASModel{
 
     //MARK: - Comment
-    internal func buildExpression(_ attribute: String, value:Any?)->SQLite.Expression<Bool?>?{
+    internal func buildExpression(_ attribute: String, value:Any?)->SQLExpression<Bool?>?{
         
         return buildExpression([attribute:value])
         
     }
     
-    internal func buildExpression(_ attributeAndValueDic:Dictionary<String,Any?>)->SQLite.Expression<Bool?>?{
+    internal func buildExpression(_ attributeAndValueDic:Dictionary<String,Any?>)->SQLExpression<Bool?>?{
         
         
-        var expressions = Array<SQLite.Expression<Bool?>>()
+        var expressions = Array<SQLExpression<Bool?>>()
         
         for case let (attribute?,column?, v) in recursionProperties() {
             
@@ -31,7 +31,7 @@ public extension ASProtocol where Self:ASModel{
                 let value = attributeAndValueDic[attribute]
                 
                 if attribute == primaryKeyAttributeName {
-                    expressions.append(Expression<Bool?>(Expression<NSNumber>(column) == value as! NSNumber))
+                    expressions.append(SQLExpression<Bool?>(SQLExpression<NSNumber>(column) == value as! NSNumber))
                     continue
                 }
                 
@@ -40,38 +40,38 @@ public extension ASProtocol where Self:ASModel{
                 switch mir.subjectType {
                     
                 case _ as String.Type:
-                    expressions.append(Expression<Bool?>(Expression<String>(column) == value as! String))
+                    expressions.append(SQLExpression<Bool?>(SQLExpression<String>(column) == value as! String))
                 case _ as String?.Type:
-                    expressions.append(Expression<String?>(column) == value as! String?)
+                    expressions.append(SQLExpression<String?>(column) == value as! String?)
                     
                 case _ as NSNumber.Type:
                     
                     if self.doubleTypes().contains(attribute) {
-                        expressions.append(Expression<Bool?>(Expression<Double>(column) == value as! Double))
+                        expressions.append(SQLExpression<Bool?>(SQLExpression<Double>(column) == value as! Double))
                     }else{
-                        expressions.append(Expression<Bool?>(Expression<NSNumber>(column) == value as! NSNumber))
+                        expressions.append(SQLExpression<Bool?>(SQLExpression<NSNumber>(column) == value as! NSNumber))
                     }
                     
                 case _ as NSNumber?.Type:
                     
                     if self.doubleTypes().contains(attribute) {
-                        expressions.append(Expression<Double?>(column) == value as? Double)
+                        expressions.append(SQLExpression<Double?>(column) == value as? Double)
                         
                     }else{
-                        expressions.append(Expression<NSNumber?>(column) == value as? NSNumber)
+                        expressions.append(SQLExpression<NSNumber?>(column) == value as? NSNumber)
                         
                     }
                     
                 case _ as NSDate.Type:
-                    expressions.append(Expression<Bool?>(Expression<NSDate>(column) == value as! NSDate))
+                    expressions.append(SQLExpression<Bool?>(SQLExpression<NSDate>(column) == value as! NSDate))
                 case _ as NSDate?.Type:
-                    expressions.append(Expression<NSDate?>(column) == value as! NSDate?)
+                    expressions.append(SQLExpression<NSDate?>(column) == value as! NSDate?)
                     
                 default: break
                     
                 }
                 
-//                if let expression = Expression<Bool?>.generate(key: column, type: v, value: value!) {
+//                if let expression = SQLExpression<Bool?>.generate(key: column, type: v, value: value!) {
 //                    expressions.append(expression)
 //                }
                 
@@ -106,32 +106,32 @@ public extension ASProtocol where Self:ASModel{
                 switch mir.subjectType {
                     
                 case _ as String.Type:
-                    expressibles.append((isAsc ? Expression<String>(column).asc : Expression<String>(column).desc))
+                    expressibles.append((isAsc ? SQLExpression<String>(column).asc : SQLExpression<String>(column).desc))
                 case _ as String?.Type:
-                    expressibles.append((isAsc ? Expression<String?>(column).asc : Expression<String?>(column).desc))
+                    expressibles.append((isAsc ? SQLExpression<String?>(column).asc : SQLExpression<String?>(column).desc))
                     
                 case _ as NSNumber.Type:
                     
                     if self.doubleTypes().contains(attribute) {
-                        expressibles.append((isAsc ? Expression<Double>(column).asc : Expression<Double>(column).desc))
+                        expressibles.append((isAsc ? SQLExpression<Double>(column).asc : SQLExpression<Double>(column).desc))
                     }else{
-                        expressibles.append((isAsc ? Expression<NSNumber>(column).asc : Expression<NSNumber>(column).desc))
+                        expressibles.append((isAsc ? SQLExpression<NSNumber>(column).asc : SQLExpression<NSNumber>(column).desc))
                     }
                     
                 case _ as NSNumber?.Type:
                     
                     if self.doubleTypes().contains(attribute) {
-                        expressibles.append((isAsc ? Expression<Double?>(column).asc : Expression<Double?>(column).desc))
+                        expressibles.append((isAsc ? SQLExpression<Double?>(column).asc : SQLExpression<Double?>(column).desc))
                         
                     }else{
-                        expressibles.append((isAsc ? Expression<NSNumber?>(column).asc : Expression<NSNumber?>(column).desc))
+                        expressibles.append((isAsc ? SQLExpression<NSNumber?>(column).asc : SQLExpression<NSNumber?>(column).desc))
                         
                     }
                     
                 case _ as NSDate.Type:
-                    expressibles.append((isAsc ? Expression<NSDate>(column).asc : Expression<NSDate>(column).desc))
+                    expressibles.append((isAsc ? SQLExpression<NSDate>(column).asc : SQLExpression<NSDate>(column).desc))
                 case _ as NSDate?.Type:
-                    expressibles.append((isAsc ? Expression<NSDate?>(column).asc : Expression<NSDate?>(column).desc))
+                    expressibles.append((isAsc ? SQLExpression<NSDate?>(column).asc : SQLExpression<NSDate?>(column).desc))
                     
                 default: break
                     
@@ -156,7 +156,7 @@ public extension ASProtocol where Self:ASModel{
             //            Log.d("assign Value-\(value) to \(attribute)-attribute of \(nameOfTable). ")
 
             if attribute == primaryKeyAttributeName {
-                let v = try! row.get(Expression<NSNumber>(column))
+                let v = try! row.get(SQLExpression<NSNumber>(column))
                 setValue(v, forKey: attribute)
                 continue
             }
@@ -166,10 +166,10 @@ public extension ASProtocol where Self:ASModel{
             switch mir.subjectType {
 
             case _ as String.Type:
-                setValue(row[Expression<String>(column)], forKey: attribute)
+                setValue(row[SQLExpression<String>(column)], forKey: attribute)
 
             case _ as String?.Type:
-                if let v = row[Expression<String?>(column)] {
+                if let v = row[SQLExpression<String?>(column)] {
                     setValue(v, forKey: attribute)
                 }else{
                     setValue(nil, forKey: attribute)
@@ -179,10 +179,10 @@ public extension ASProtocol where Self:ASModel{
             case _ as NSNumber.Type:
 
                 if self.doubleTypes().contains(attribute) {
-                    setValue(NSNumber(value:try! row.get(Expression<Double>(column))) , forKey: attribute)
+                    setValue(NSNumber(value:try! row.get(SQLExpression<Double>(column))) , forKey: attribute)
                 }else{
 
-                    let v = try! row.get(Expression<NSNumber>(column))
+                    let v = try! row.get(SQLExpression<NSNumber>(column))
                     setValue(v, forKey: attribute)
 
                 }
@@ -190,11 +190,11 @@ public extension ASProtocol where Self:ASModel{
             case _ as NSNumber?.Type:
 
                 if self.doubleTypes().contains(attribute) {
-                    if let v = try! row.get(Expression<Double?>(column)) {
+                    if let v = try! row.get(SQLExpression<Double?>(column)) {
                         setValue(NSNumber(value:v), forKey: attribute)
                     }
                 }else{
-                    if let v = try! row.get(Expression<NSNumber?>(column)) {
+                    if let v = try! row.get(SQLExpression<NSNumber?>(column)) {
                         setValue(v, forKey: attribute)
                     }else{
                         setValue(nil, forKey: attribute)
@@ -202,10 +202,10 @@ public extension ASProtocol where Self:ASModel{
                 }
 
             case _ as NSDate.Type:
-                setValue(try! row.get(Expression<NSDate>(column)), forKey: attribute)
+                setValue(try! row.get(SQLExpression<NSDate>(column)), forKey: attribute)
 
             case _ as NSDate?.Type:
-                if let v = try! row.get(Expression<NSDate?>(column)) {
+                if let v = try! row.get(SQLExpression<NSDate?>(column)) {
                     setValue(v, forKey: attribute)
                 }else{
                     setValue(nil, forKey: attribute)
@@ -235,9 +235,9 @@ public extension ASProtocol where Self:ASModel{
             switch mir.subjectType {
                 
             case _ as String.Type:
-                dic[attribute] = row[Expression<String>(column)]
+                dic[attribute] = row[SQLExpression<String>(column)]
             case _ as String?.Type:
-                if let v = row[Expression<String?>(column)] {
+                if let v = row[SQLExpression<String?>(column)] {
                     dic[attribute] = v
                 }else{
 //                    dic[attribute] = nil
@@ -247,20 +247,20 @@ public extension ASProtocol where Self:ASModel{
             case _ as NSNumber.Type:
                 
                 if self.doubleTypes().contains(attribute) {
-                    dic[attribute] = NSNumber(value:try! row.get(Expression<Double>(column)))
+                    dic[attribute] = NSNumber(value:try! row.get(SQLExpression<Double>(column)))
                 }else{
-                    let v = try! row.get(Expression<NSNumber>(column))
+                    let v = try! row.get(SQLExpression<NSNumber>(column))
                     dic[attribute] = v
                 }
                 
             case _ as NSNumber?.Type:
                 
                 if self.doubleTypes().contains(attribute) {
-                    if let v = try! row.get(Expression<Double?>(column)) {
+                    if let v = try! row.get(SQLExpression<Double?>(column)) {
                         dic[attribute] = NSNumber(value:v)
                     }
                 }else{
-                    if let v = try! row.get(Expression<NSNumber?>(column)) {
+                    if let v = try! row.get(SQLExpression<NSNumber?>(column)) {
                         dic[attribute] = v
                     }else{
                         //                    dic[attribute] = nil
@@ -268,9 +268,9 @@ public extension ASProtocol where Self:ASModel{
                 }
                 
             case _ as NSDate.Type:
-                dic[attribute] = try! row.get(Expression<NSDate>(column))
+                dic[attribute] = try! row.get(SQLExpression<NSDate>(column))
             case _ as NSDate?.Type:
-                if let v = try! row.get(Expression<NSDate?>(column)) {
+                if let v = try! row.get(SQLExpression<NSDate?>(column)) {
                     dic[attribute] = v
                 }else{
                     //                    dic[attribute] = nil

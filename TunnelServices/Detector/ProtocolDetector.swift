@@ -20,9 +20,9 @@ public final class ProtocolDetector: ChannelInboundHandler, RemovableChannelHand
     private var index:Int = 0 //
 
     private let matcherList: [ProtocolMatcher]
-    public var task:Task
-    
-    init(task:Task ,matchers:[ProtocolMatcher]) {
+    public var task:CaptureTask
+
+    init(task:CaptureTask ,matchers:[ProtocolMatcher]) {
         self.matcherList = matchers
         self.task = task
     }

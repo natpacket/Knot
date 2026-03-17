@@ -1,6 +1,6 @@
 //
 //  ProxyContext.swift
-//  NIO1901
+//  Knot
 //
 //  Created by LiuJie on 2019/4/20.
 //  Copyright © 2019 Lojii. All rights reserved.
@@ -68,10 +68,10 @@ class ProxyContext: NSObject {
     var isHttp:Bool
     var isSSL:Bool = false
     
-    var task:Task
+    var task:CaptureTask
     var session:Session
-    
-    init(isHttp:Bool = false, task:Task) {
+
+    init(isHttp:Bool = false, task:CaptureTask) {
         self.isHttp = isHttp
         self.task = task
         self.session = Session.newSession(task)

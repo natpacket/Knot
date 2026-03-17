@@ -1,6 +1,6 @@
 //
 //  ExchangeHandler.swift
-//  NIO1901
+//  Knot
 //
 //  Created by LiuJie on 2019/4/20.
 //  Copyright © 2019 Lojii. All rights reserved.
@@ -92,8 +92,8 @@ class ExchangeHandler: ChannelInboundHandler, RemovableChannelHandler {
             proxyContext.serverChannel?.writeAndFlush(HTTPServerResponsePart.end(tailHeaders), promise: promise)
             promise?.futureResult.whenComplete({ (_) in
 //                print("关闭对内通道")
-                if self.proxyContext.serverChannel!.isActive {
-                    self.proxyContext.serverChannel!.close(mode: .all, promise: nil)
+                if let serverChannel = self.proxyContext.serverChannel, serverChannel.isActive {
+                    serverChannel.close(mode: .all, promise: nil)
                 }
             })
 //             读完数据后关闭对外channel
@@ -120,8 +120,8 @@ class ExchangeHandler: ChannelInboundHandler, RemovableChannelHandler {
 
         context.channel.close(mode: .all,promise: nil)
 
-        if proxyContext.serverChannel!.isActive {
-            _ = self.proxyContext.serverChannel!.close(mode: .all)
+        if let serverChannel = proxyContext.serverChannel, serverChannel.isActive {
+            _ = serverChannel.close(mode: .all)
         }
     }
     

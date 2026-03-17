@@ -55,7 +55,7 @@ class HTTPHandler : ChannelInboundHandler, RemovableChannelHandler {
             proxyContext.session.reqType = head.headers["Content-Type"].first ?? ""
             
             // 判断规则，是否拦截，copy等
-            if !proxyContext.request!.ssl {
+            if !(proxyContext.request?.ssl ?? false) {
                 proxyContext.session.ignore = proxyContext.task.rule.matching(host: proxyContext.session.host ?? "",uri: head.uri, target: proxyContext.session.target ?? "")
 //                print("HTTPHandler匹配")
                 if proxyContext.task.rule.defaultStrategy == .COPY {
@@ -114,9 +114,17 @@ class HTTPHandler : ChannelInboundHandler, RemovableChannelHandler {
             channelInitializer = { (outChannel) -> EventLoopFuture<Void> in
                 self.proxyContext.clientChannel = outChannel
                 let tlsClientConfiguration = TLSConfiguration.forClient(applicationProtocols: ["http/1.1"])
-                let sslClientContext = try! NIOSSLContext(configuration: tlsClientConfiguration)
+                guard let sslClientContext = try? NIOSSLContext(configuration: tlsClientConfiguration) else {
+                    self.proxyContext.session.note = "error:Failed to create SSL client context"
+                    outChannel.close(mode: .all, promise: nil)
+                    return outChannel.eventLoop.makeFailedFuture(ServerChannelError(errCode: -1, localizedDescription: "Failed to create SSL client context"))
+                }
                 let sniName = request.host.isIPAddress() ? nil : request.host
-                let sslClientHandler = try! NIOSSLClientHandler(context: sslClientContext, serverHostname: sniName)
+                guard let sslClientHandler = try? NIOSSLClientHandler(context: sslClientContext, serverHostname: sniName) else {
+                    self.proxyContext.session.note = "error:Failed to create SSL client handler"
+                    outChannel.close(mode: .all, promise: nil)
+                    return outChannel.eventLoop.makeFailedFuture(ServerChannelError(errCode: -1, localizedDescription: "Failed to create SSL client handler"))
+                }
                 let applicationProtocolNegotiationHandler = ApplicationProtocolNegotiationHandler { (result) -> EventLoopFuture<Void> in
 //                    print("======= m->s:\(result) =======")
                     // ssl握手成功才算连接成功
@@ -148,8 +156,17 @@ class HTTPHandler : ChannelInboundHandler, RemovableChannelHandler {
             }
         }
         
-        let clientBootstrap = ClientBootstrap(group: proxyContext.serverChannel!.eventLoop.next())//SO_SNDTIMEO
-            .channelInitializer(channelInitializer!)
+        guard let serverChannel = proxyContext.serverChannel else {
+            print("serverChannel is nil in connectToServer")
+            return
+        }
+        guard let initializer = channelInitializer else {
+            print("channelInitializer is nil in connectToServer")
+            _ = serverChannel.close(mode: .all)
+            return
+        }
+        let clientBootstrap = ClientBootstrap(group: serverChannel.eventLoop.next())//SO_SNDTIMEO
+            .channelInitializer(initializer)
         cf = clientBootstrap.connect(host: request.host, port: request.port)
         cf!.whenComplete { result in
             switch result {
@@ -178,25 +195,29 @@ class HTTPHandler : ChannelInboundHandler, RemovableChannelHandler {
     }
     
     func sendData(data:Any){
+        guard let clientChannel = proxyContext.clientChannel else {
+            print("clientChannel is nil in sendData, dropping data")
+            return
+        }
         if let head = data as? HTTPRequestHead{
             let clientHead = HTTPRequestHead(version: head.version, method: head.method, uri: head.uri, headers: head.headers)
-            _ = proxyContext.clientChannel!.writeAndFlush(HTTPClientRequestPart.head(clientHead))
+            _ = clientChannel.writeAndFlush(HTTPClientRequestPart.head(clientHead))
         }
         if let body = data as? ByteBuffer{
-            _ = proxyContext.clientChannel!.writeAndFlush(HTTPClientRequestPart.body(.byteBuffer(body)))
+            _ = clientChannel.writeAndFlush(HTTPClientRequestPart.body(.byteBuffer(body)))
         }
         if let end = data as? HTTPHeaders {
-            let promise = proxyContext.clientChannel?.eventLoop.makePromise(of: Void.self)
-            proxyContext.clientChannel!.writeAndFlush(HTTPClientRequestPart.end(end), promise: promise)
-            promise?.futureResult.whenComplete({ (_) in
+            let promise = clientChannel.eventLoop.makePromise(of: Void.self)
+            clientChannel.writeAndFlush(HTTPClientRequestPart.end(end), promise: promise)
+            promise.futureResult.whenComplete({ (_) in
                 self.proxyContext.session.reqEndTime = NSNumber(value: Date().timeIntervalSince1970)
                 try? self.proxyContext.session.saveToDB()
             })
         }
         if let endstr = data as? String, endstr == "end"{
-            let promise = proxyContext.clientChannel?.eventLoop.makePromise(of: Void.self)
-            proxyContext.clientChannel!.writeAndFlush(HTTPClientRequestPart.end(nil), promise: promise)
-            promise?.futureResult.whenComplete({ (_) in
+            let promise = clientChannel.eventLoop.makePromise(of: Void.self)
+            clientChannel.writeAndFlush(HTTPClientRequestPart.end(nil), promise: promise)
+            promise.futureResult.whenComplete({ (_) in
                 self.proxyContext.session.reqEndTime = NSNumber(value: Date().timeIntervalSince1970)
                 try? self.proxyContext.session.saveToDB()
             })

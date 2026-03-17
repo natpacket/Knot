@@ -1,6 +1,6 @@
 //
 //  HttpsMatcher.swift
-//  NIO1901
+//  Knot
 //
 //  Created by LiuJie on 2019/4/8.
 //  Copyright © 2019 Lojii. All rights reserved.
@@ -33,7 +33,7 @@ class HttpsMatcher: ProtocolMatcher {
         return ProtocolMatcher.MISMATCH
     }
     
-    override func handlePipeline(pipleline: ChannelPipeline, task:Task) {
+    override func handlePipeline(pipleline: ChannelPipeline, task:CaptureTask) {
         let pc = ProxyContext(isHttp:true, task:task)
         pc.session.schemes = "Https"
         _ = pipleline.addHandler(HTTPResponseEncoder(), name: "HTTPResponseEncoder", position: .last)

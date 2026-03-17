@@ -9,8 +9,9 @@
 import UIKit
 import NIO
 import NIOSSL
-
 import NIOTLS
+import X509
+import _CryptoExtras
 import NIOConcurrencyHelpers
 
 fileprivate let isDebug = false
@@ -40,6 +41,8 @@ public class LocalSSLServer {
     public var cacert:NIOSSLCertificate!
     public var cakey:NIOSSLPrivateKey!
     public var rsakey:NIOSSLPrivateKey!
+    var cacertPath: String = ""
+    var rsakeyPath: String = ""
     
     public init(host:String,port:Int) {
         self.host = host
@@ -55,10 +58,20 @@ public class LocalSSLServer {
             callBack(false)
             return
         }
-        // 通过CA证书给域名动态签发证书
-        let dynamicCert = CertUtils.generateCert(host: SSLHost,rsaKey: rsakey, caKey: cakey, caCert: cacert)
+        // 通过CA证书给域名动态签发证书 (pure Swift)
+        guard let x509CACert = try? CertGenerator.loadCertificate(fromPEMFile: cacertPath),
+              let rsaSigningKey = try? CertGenerator.loadRSAPrivateKey(fromPEMFile: rsakeyPath),
+              let x509Cert = try? CertGenerator.generateCert(host: SSLHost, rsaKey: rsaSigningKey, caKey: rsaSigningKey, caCert: x509CACert),
+              let dynamicCert = try? CertGenerator.toNIOSSL(x509Cert) else {
+            callBack(false)
+            return
+        }
         let tlsServerConfiguration = TLSConfiguration.forServer(certificateChain: [.certificate(dynamicCert)], privateKey: .privateKey(rsakey))
-        sslContext = try! NIOSSLContext(configuration: tlsServerConfiguration)
+        guard let ctx = try? NIOSSLContext(configuration: tlsServerConfiguration) else {
+            callBack(false)
+            return
+        }
+        sslContext = ctx
         group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
         let bootstrap = ServerBootstrap(group: group!)
             .serverChannelOption(ChannelOptions.backlog, value: 256)
@@ -93,24 +106,31 @@ public class LocalSSLServer {
     }
     
     func loadCACert() -> Bool{
-        // load cert
+        guard let certDir = MitmService.getCertPath() else { return false }
+        let certPath = certDir.appendingPathComponent("cacert.pem", isDirectory: false).path.replacingOccurrences(of: "file://", with: "")
+        let keyPath = certDir.appendingPathComponent("cakey.pem", isDirectory: false).path.replacingOccurrences(of: "file://", with: "")
+        let rsaPath = certDir.appendingPathComponent("rsakey.pem", isDirectory: false).path.replacingOccurrences(of: "file://", with: "")
+
+        self.cacertPath = certPath
+        self.rsakeyPath = rsaPath
+
         if let certDir = MitmService.getCertPath() {
             let cacertPath = certDir.appendingPathComponent("cacert.pem", isDirectory: false)
             let cakeyPath = certDir.appendingPathComponent("cakey.pem", isDirectory: false)
             let rsakeyPath = certDir.appendingPathComponent("rsakey.pem", isDirectory: false)
-            if let cert = try? NIOSSLCertificate(file: cacertPath.absoluteString.replacingOccurrences(of: "file://", with: ""), format: .pem) {
+            if let cert = try? NIOSSLCertificate(file: certPath, format: .pem) {
                 cacert = cert
             }else{
                 print("Load CACert Failure !")
                 return false
             }
-            if let caPriKey = try? NIOSSLPrivateKey(file: cakeyPath.absoluteString.replacingOccurrences(of: "file://", with: ""), format: .pem) {
+            if let caPriKey = try? NIOSSLPrivateKey(file: keyPath, format: .pem) {
                 cakey = caPriKey
             }else{
                 print("Load CAKey Failure !")
                 return false
             }
-            if let carsaKey = try? NIOSSLPrivateKey(file: rsakeyPath.absoluteString.replacingOccurrences(of: "file://", with: ""), format: .pem) {
+            if let carsaKey = try? NIOSSLPrivateKey(file: rsaPath, format: .pem) {
                 rsakey = carsaKey
             }else{
                 print("Load RSAKey Failure !")
@@ -163,10 +183,10 @@ public class CheckCert {
             let policy = SecPolicyCreateBasicX509()
             var trust:SecTrust?
             _ = SecTrustCreateWithCertificates([cert] as CFTypeRef, policy, &trust)
-            if trust != nil {
-                var trustResult: SecTrustResultType = .invalid
-                _ = SecTrustEvaluate(trust!, &trustResult)
-                if trustResult != .proceed && trustResult != .unspecified {
+            if let trust = trust {
+                var error: CFError?
+                let isTrusted = SecTrustEvaluateWithError(trust, &error)
+                if !isTrusted {
                     if isDebug { print("no install cert !") }
                     isEnd = true
                     checkCallBack(.none)

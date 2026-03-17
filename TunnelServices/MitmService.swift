@@ -40,7 +40,7 @@ public class MitmService: NSObject {
         case failure    // 失败
     }
 
-    var task:Task!
+    var task:CaptureTask!
     let master = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount)
     let worker = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount*3)
     
@@ -62,7 +62,7 @@ public class MitmService: NSObject {
     var compelete:((Result<Int, Error>) -> Void)?
     var closed:(() -> Void)?
     
-    public init(task:Task) {
+    public init(task:CaptureTask) {
         super.init()
         
         self.task = task
@@ -119,14 +119,14 @@ public class MitmService: NSObject {
         // 获取Rule
         
         // 获取Task
-        let task:Task
-        if let lastTask = Task.getLast(), lastTask.numberOfUse <= 0 { // 最新的未使用过的Task
+        let task:CaptureTask
+        if let lastTask = CaptureTask.getLast(), lastTask.numberOfUse <= 0 { // 最新的未使用过的Task
             task = lastTask
             task.addSender()
             task.loadCACert()
             AxLogger.log("********* 使用的是最新的未使用过的！", level: .Info)
         }else{
-            task = Task.newTask()
+            task = CaptureTask.newTask()
             try? task.save()
             task.addSender()
             task.loadCACert()
@@ -412,10 +412,13 @@ public class MitmService: NSObject {
         let fileManager = FileManager.default
         var certDirectory = fileManager.containerURL(forSecurityApplicationGroupIdentifier: GROUPNAME)
         certDirectory?.appendPathComponent("Cert")
-        let dir = certDirectory?.absoluteString.components(separatedBy: "file://").last
-        let isExits = fileManager.fileExists(atPath: dir!, isDirectory:nil)
-        if !isExits, certDirectory != nil {
-            try? fileManager.createDirectory(at: certDirectory!, withIntermediateDirectories: false, attributes: nil)
+        guard let dir = certDirectory?.absoluteString.components(separatedBy: "file://").last else {
+            AxLogger.log("Cert Directory path is nil", level: .Error)
+            return certDirectory
+        }
+        let isExits = fileManager.fileExists(atPath: dir, isDirectory:nil)
+        if !isExits, let certDir = certDirectory {
+            try? fileManager.createDirectory(at: certDir, withIntermediateDirectories: false, attributes: nil)
         }
         AxLogger.log("Cert Directory path:\(certDirectory?.absoluteString ?? "null")", level: .Info)
         return certDirectory
@@ -431,18 +434,23 @@ public class MitmService: NSObject {
         let dbUrl = directory?.appendingPathComponent("nio.db").absoluteString ?? ""
         //directory?.appendingPathExtension("nio.db").absoluteString ?? ""
         //"\(directory?.absoluteString ?? "")nio.db"
-        let file = dbUrl.components(separatedBy: "file://").last
-        let isExits = fileManager.fileExists(atPath: file!, isDirectory:&isDir)
-        if !isExits {
-            fileManager.createFile(atPath: file!, contents: nil, attributes: nil)
+        guard let file = dbUrl.components(separatedBy: "file://").last else {
+            AxLogger.log("DB file path is nil", level: .Error)
+            return ""
         }
-        AxLogger.log("DB file path:\(file ?? "null")", level: .Info)
-        return file!
+        let isExits = fileManager.fileExists(atPath: file, isDirectory:&isDir)
+        if !isExits {
+            fileManager.createFile(atPath: file, contents: nil, attributes: nil)
+        }
+        AxLogger.log("DB file path:\(file)", level: .Info)
+        return file
     }
     
     public static func getTestDBPath() -> String{
         let fileManager = FileManager.default
-        let documentDirPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
+        guard let documentDirPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first else {
+            return ""
+        }
         var isDir : ObjCBool = false
         let isExits = fileManager.fileExists(atPath: documentDirPath, isDirectory:&isDir)
         
@@ -450,7 +458,7 @@ public class MitmService: NSObject {
             fatalError("The dir is file，can not create dir.")
         }
         if !isExits {
-            try! FileManager.default.createDirectory(atPath: documentDirPath, withIntermediateDirectories: true, attributes: nil)
+            try? FileManager.default.createDirectory(atPath: documentDirPath, withIntermediateDirectories: true, attributes: nil)
             print("Create db dir success-\(documentDirPath)")
         }
         let dbPath = documentDirPath + "/niox.db"
