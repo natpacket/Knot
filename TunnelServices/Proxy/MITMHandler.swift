@@ -79,10 +79,11 @@ public final class MITMHandler: ChannelInboundHandler, RemovableChannelHandler {
             return
         }
 
-        // Create TLS server context with the generated certificate
+        // Create TLS server context — advertise both h2 and http/1.1
         let tlsConfig = TLSConfiguration.forServer(
             certificateChain: [.certificate(cert)],
-            privateKey: .privateKey(rsaKey)
+            privateKey: .privateKey(rsaKey),
+            applicationProtocols: ["h2", "http/1.1"]
         )
 
         guard let sslContext = try? NIOSSLContext(configuration: tlsConfig),
@@ -101,12 +102,25 @@ public final class MITMHandler: ChannelInboundHandler, RemovableChannelHandler {
             context.channel.close(mode: .all, promise: nil)
         }
 
-        // ALPN handler: after TLS handshake completes, add HTTP capture pipeline
+        // ALPN handler: after TLS handshake, add HTTP/1.1 or HTTP/2 pipeline
         let alpnHandler = ApplicationProtocolNegotiationHandler { [weak self] result -> EventLoopFuture<Void> in
             handshakeTimeoutTask.cancel()
             guard let self = self else { return context.eventLoop.makeSucceededVoidFuture() }
             self.recorder.recordHandshakeComplete()
-            return self.addHTTPCapturePipeline(context: context)
+
+            // Check ALPN result to decide HTTP version
+            switch result {
+            case .negotiated("h2"):
+                // HTTP/2 (gRPC, standard H2 traffic)
+                self.recorder.session.schemes = "H2"
+                AxLogger.log("ALPN negotiated h2 for \(self.host)", level: .Info)
+                return HTTP2CaptureBuilder.addPipeline(
+                    context: context, recorder: self.recorder
+                )
+            default:
+                // HTTP/1.1 (default)
+                return self.addHTTPCapturePipeline(context: context)
+            }
         }
 
         // Add handlers: SSL → ALPN → (HTTP pipeline added after handshake)

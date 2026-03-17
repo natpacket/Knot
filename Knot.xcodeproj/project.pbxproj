@@ -388,6 +388,7 @@
 		92C5AA28818E7516AFA3E9B5 /* ConstraintDSL.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E94C9AD553DF6CA626FDEB /* ConstraintDSL.swift */; };
 		94497234A9327D01AADAE1AF /* ConstraintPriorityTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13F2FD9B282202711B10EB4F /* ConstraintPriorityTarget.swift */; };
 		95C7202DCAF07888B9B0C1BC /* JXSegmentedIndicatorBaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0AAAFFFA32711884F4BF296 /* JXSegmentedIndicatorBaseView.swift */; };
+		9712139EB9746B98B746BE34 /* GRPCCaptureHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B32AA7641A43A3723E75FBC5 /* GRPCCaptureHandler.swift */; };
 		97C314B1176BFB3E08AC2144 /* JXSegmentedTitleImageItemModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69D98B00263736F1EFAAB5E4 /* JXSegmentedTitleImageItemModel.swift */; };
 		98C26177BA339FB66047FDB0 /* JXSegmentedIndicatorDotLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A27187B19BFFCBE04E6315 /* JXSegmentedIndicatorDotLineView.swift */; };
 		998A46AA43EA49FD80B74E9C /* SessionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5604390B22886A16007CB3DB /* SessionItem.swift */; };
@@ -418,6 +419,7 @@
 		BFC14C6447E8EA114017A51A /* JXSegmentedDotDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = F003E025996E05FC74CA125E /* JXSegmentedDotDataSource.swift */; };
 		C123A4AD05BD71F7E1145EF9 /* JXSegmentedTitleGradientCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 296CD21D9A70BD72C49ECF96 /* JXSegmentedTitleGradientCell.swift */; };
 		C36079BAB27B609E4C9EEE10 /* ConstraintLayoutSupportDSL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CAECD6082BF014E7E199A06 /* ConstraintLayoutSupportDSL.swift */; };
+		C66BA0243EBFF4B597452CB9 /* HTTP2CaptureHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F2249AEBEE5F5C08D6E15C /* HTTP2CaptureHandler.swift */; };
 		C81DD450F6DF009843A20C8A /* Typealiases.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A90BCEBA5D16F54761B2A3 /* Typealiases.swift */; };
 		C9298B672528D9018E60C495 /* ConstraintConstantTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C617CC3D6671E493F9E35EA /* ConstraintConstantTarget.swift */; };
 		C967A25D1FF4D9B4C8A4C8EE /* IDDialogImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5675D14022AF855100562E73 /* IDDialogImageView.swift */; };
@@ -906,6 +908,7 @@
 		63332E11696F553E3B26E475 /* JXSegmentedTitleCell.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = JXSegmentedTitleCell.swift; sourceTree = "<group>"; };
 		65497F73D18F834D1554CC9C /* ProtocolRouter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProtocolRouter.swift; sourceTree = "<group>"; };
 		69D98B00263736F1EFAAB5E4 /* JXSegmentedTitleImageItemModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = JXSegmentedTitleImageItemModel.swift; sourceTree = "<group>"; };
+		69F2249AEBEE5F5C08D6E15C /* HTTP2CaptureHandler.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HTTP2CaptureHandler.swift; sourceTree = "<group>"; };
 		6CAECD6082BF014E7E199A06 /* ConstraintLayoutSupportDSL.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConstraintLayoutSupportDSL.swift; sourceTree = "<group>"; };
 		6E8E7861DE000302D7D8FC1B /* ZKProgressHUDMaskStyle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ZKProgressHUDMaskStyle.swift; sourceTree = "<group>"; };
 		7168E7138FB482650F3DE5D6 /* ConstraintView+Extensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "ConstraintView+Extensions.swift"; sourceTree = "<group>"; };
@@ -940,6 +943,7 @@
 		AF8493FF23A2359DCFC9722B /* ConstraintRelatableTarget.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConstraintRelatableTarget.swift; sourceTree = "<group>"; };
 		AF84DDEC55A60EB08E225EAD /* ConstraintLayoutGuideDSL.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConstraintLayoutGuideDSL.swift; sourceTree = "<group>"; };
 		B233F3B4DAF97767D5E0A74C /* JXSegmentedTitleOrImageCell.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = JXSegmentedTitleOrImageCell.swift; sourceTree = "<group>"; };
+		B32AA7641A43A3723E75FBC5 /* GRPCCaptureHandler.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GRPCCaptureHandler.swift; sourceTree = "<group>"; };
 		B44B552D0DC6514F51CBE1E8 /* ConstraintRelation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConstraintRelation.swift; sourceTree = "<group>"; };
 		B4EE5B5D4926F9F1B67815EB /* JXSegmentedListContainerView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = JXSegmentedListContainerView.swift; sourceTree = "<group>"; };
 		B569F27CE16FAFFD307139B4 /* ZKGifView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ZKGifView.swift; sourceTree = "<group>"; };
@@ -2036,6 +2040,8 @@
 				CE9A92C1E140EA4DA3431953 /* TunnelHandler.swift */,
 				A7E6EB37A6F933472CC9506A /* SessionRecorder.swift */,
 				C9E109E2DBE14EF583E69C29 /* WebSocketCaptureHandler.swift */,
+				B32AA7641A43A3723E75FBC5 /* GRPCCaptureHandler.swift */,
+				69F2249AEBEE5F5C08D6E15C /* HTTP2CaptureHandler.swift */,
 			);
 			name = Proxy;
 			path = Proxy;
@@ -2196,6 +2202,8 @@
 				9A9C86B77F365B9D2817B501 /* NIOExtras */,
 				24526FD015C9CBEC1B72D350 /* NIOHTTPCompression */,
 				04D3E8E20AD908D23CBF4224 /* NIOWebSocket */,
+				472413CAEFD55F07F574C191 /* NIOHTTP2 */,
+				12A6E7403761FE7CC1273319 /* SwiftProtobuf */,
 			);
 			productName = TunnelServices;
 			productReference = 56F415B62277119F00AE1554 /* TunnelServices.framework */;
@@ -2273,6 +2281,8 @@
 				F90AFFCC0830DFE1437AE376 /* XCRemoteSwiftPackageReference "CocoaAsyncSocket" */,
 				04F3C2B1B7F9FED55528EC81 /* XCRemoteSwiftPackageReference "swift-nio" */,
 				DA090655C7CBDE215D9F4DCB /* XCRemoteSwiftPackageReference "swift-nio-extras" */,
+				619F8AC3394BA1BB625A7949 /* XCRemoteSwiftPackageReference "swift-nio-http2" */,
+				62D658CCDB77CB6BEA2F60DA /* XCRemoteSwiftPackageReference "swift-protobuf" */,
 			);
 			productRefGroup = 153E207521EC26B500B82536 /* Products */;
 			projectDirPath = "";
@@ -2787,6 +2797,8 @@
 				1D814A92BA2455C7A05E9915 /* TunnelHandler.swift in Sources */,
 				B2780CC804A8F6571E36A221 /* SessionRecorder.swift in Sources */,
 				30EFB8D86D59397F754577EA /* WebSocketCaptureHandler.swift in Sources */,
+				9712139EB9746B98B746BE34 /* GRPCCaptureHandler.swift in Sources */,
+				C66BA0243EBFF4B597452CB9 /* HTTP2CaptureHandler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3259,12 +3271,20 @@
 				minimumVersion = 5.19.0;
 			};
 		};
-		6690E5289E4347A1F7D81810 /* XCRemoteSwiftPackageReference "swift-nio" */ = {
+		619F8AC3394BA1BB625A7949 /* XCRemoteSwiftPackageReference "swift-nio-http2" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/apple/swift-nio.git";
+			repositoryURL = "https://github.com/apple/swift-nio-http2.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 2.40.0;
+				minimumVersion = 1.30.0;
+			};
+		};
+		62D658CCDB77CB6BEA2F60DA /* XCRemoteSwiftPackageReference "swift-protobuf" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-protobuf.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.28.0;
 			};
 		};
 		6B2A836E2D8014E15BE0C474 /* XCRemoteSwiftPackageReference "swift-nio-ssl" */ = {
@@ -3328,13 +3348,18 @@
 /* Begin XCSwiftPackageProductDependency section */
 		030258C9FE57565E0BD00B67 /* NIOConcurrencyHelpers */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6690E5289E4347A1F7D81810 /* XCRemoteSwiftPackageReference "swift-nio" */;
+			package = 04F3C2B1B7F9FED55528EC81 /* XCRemoteSwiftPackageReference "swift-nio" */;
 			productName = NIOConcurrencyHelpers;
 		};
 		04D3E8E20AD908D23CBF4224 /* NIOWebSocket */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 04F3C2B1B7F9FED55528EC81 /* XCRemoteSwiftPackageReference "swift-nio" */;
 			productName = NIOWebSocket;
+		};
+		12A6E7403761FE7CC1273319 /* SwiftProtobuf */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 62D658CCDB77CB6BEA2F60DA /* XCRemoteSwiftPackageReference "swift-protobuf" */;
+			productName = SwiftProtobuf;
 		};
 		1FE88E9680CFA69222A2D088 /* SQLite */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -3343,7 +3368,7 @@
 		};
 		20B915FD650C06D0E99BF36B /* NIOHTTP1 */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6690E5289E4347A1F7D81810 /* XCRemoteSwiftPackageReference "swift-nio" */;
+			package = 04F3C2B1B7F9FED55528EC81 /* XCRemoteSwiftPackageReference "swift-nio" */;
 			productName = NIOHTTP1;
 		};
 		24526FD015C9CBEC1B72D350 /* NIOHTTPCompression */ = {
@@ -3369,6 +3394,11 @@
 			package = 25265924C3F809A7A71F3C3D /* XCRemoteSwiftPackageReference "SDWebImage" */;
 			productName = SDWebImage;
 		};
+		472413CAEFD55F07F574C191 /* NIOHTTP2 */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 619F8AC3394BA1BB625A7949 /* XCRemoteSwiftPackageReference "swift-nio-http2" */;
+			productName = NIOHTTP2;
+		};
 		4A890CD981FCC989035A520F /* X509 */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D134BBFC5F248BE7170C5A2B /* XCRemoteSwiftPackageReference "swift-certificates" */;
@@ -3376,12 +3406,12 @@
 		};
 		4E1012A22A325631FF5EA500 /* NIO */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6690E5289E4347A1F7D81810 /* XCRemoteSwiftPackageReference "swift-nio" */;
+			package = 04F3C2B1B7F9FED55528EC81 /* XCRemoteSwiftPackageReference "swift-nio" */;
 			productName = NIO;
 		};
 		53BF8622DA1A7FE821C54C95 /* NIO */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6690E5289E4347A1F7D81810 /* XCRemoteSwiftPackageReference "swift-nio" */;
+			package = 04F3C2B1B7F9FED55528EC81 /* XCRemoteSwiftPackageReference "swift-nio" */;
 			productName = NIO;
 		};
 		5A690F3E6F385D0EA4570C13 /* NIOSSL */ = {
@@ -3395,7 +3425,7 @@
 		};
 		776227564669BCA2E87F0657 /* NIOFoundationCompat */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6690E5289E4347A1F7D81810 /* XCRemoteSwiftPackageReference "swift-nio" */;
+			package = 04F3C2B1B7F9FED55528EC81 /* XCRemoteSwiftPackageReference "swift-nio" */;
 			productName = NIOFoundationCompat;
 		};
 		8162DD717FBAB22908DCF535 /* NIOConcurrencyHelpers */ = {
