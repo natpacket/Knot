@@ -59,9 +59,9 @@ let package = Package(
                 .product(name: "SQLite", package: "SQLite.swift"),
                 // Networking
                 .product(name: "CocoaAsyncSocket", package: "CocoaAsyncSocket"),
-                // QUIC
-                .product(name: "SwiftQuiche", package: "SwiftQuiche"),
-                .product(name: "SwiftLsquic", package: "SwiftLsquic"),
+                // QUIC (iOS-only: xcframeworks have no macOS slice)
+                .product(name: "SwiftQuiche", package: "SwiftQuiche", condition: .when(platforms: [.iOS])),
+                .product(name: "SwiftLsquic", package: "SwiftLsquic", condition: .when(platforms: [.iOS])),
                 // System
                 "Czlib",
             ],
