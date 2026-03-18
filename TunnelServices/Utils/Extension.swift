@@ -6,7 +6,7 @@
 //  Copyright © 2019 Lojii. All rights reserved.
 //
 
-import UIKit
+import Foundation
 
 extension FileManager {
     public func fileExists(url:URL) -> Bool {

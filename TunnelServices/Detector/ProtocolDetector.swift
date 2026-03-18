@@ -6,7 +6,7 @@
 //  Copyright © 2018年 Lojii. All rights reserved.
 //
 // 协议探测器
-import UIKit
+import Foundation
 import NIO
 import NIOHTTP1
 //import NIOTransportServices

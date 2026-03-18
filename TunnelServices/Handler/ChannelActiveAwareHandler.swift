@@ -6,7 +6,7 @@
 //  Copyright © 2019 Lojii. All rights reserved.
 //
 
-import UIKit
+import Foundation
 import NIOTLS
 import NIO
 import NIOSSL

@@ -6,7 +6,7 @@
 //  Copyright © 2019 Lojii. All rights reserved.
 //
 
-import UIKit
+import Foundation
 import NIO
 import NIOHTTP1
 import Network

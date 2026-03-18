@@ -6,7 +6,7 @@
 //  Copyright © 2018年 Lojii. All rights reserved.
 //
 
-import UIKit
+import Foundation
 import NIO
 
 //Matcher for protocol.

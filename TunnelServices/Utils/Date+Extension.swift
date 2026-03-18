@@ -6,7 +6,7 @@
 //  Copyright © 2019 Lojii. All rights reserved.
 //
 
-import UIKit
+import Foundation
 
 extension Date {
     ///获取当前时间字符串

@@ -6,7 +6,7 @@
 //  Copyright © 2019 Lojii. All rights reserved.
 //
 
-import UIKit
+import Foundation
 
 public let CurrentRuleDidChange: NSNotification.Name = NSNotification.Name(rawValue: "CurrentRuleDidChange")
 
