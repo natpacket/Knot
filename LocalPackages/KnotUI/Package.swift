@@ -9,11 +9,12 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../KnotCore"),
+        .package(path: "../TunnelServices"),
     ],
     targets: [
         .target(
             name: "KnotUI",
-            dependencies: ["KnotCore"]
+            dependencies: ["KnotCore", "TunnelServices"]
         ),
         .testTarget(
             name: "KnotUITests",
