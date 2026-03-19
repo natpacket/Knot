@@ -411,7 +411,7 @@ public class MitmService: NSObject {
         let fileManager = FileManager.default
         var certDirectory = fileManager.containerURL(forSecurityApplicationGroupIdentifier: GROUPNAME)
         certDirectory?.appendPathComponent("Cert")
-        guard let dir = certDirectory?.absoluteString.components(separatedBy: "file://").last else {
+        guard let dir = certDirectory?.path else {
             AxLogger.log("Cert Directory path is nil", level: .Error)
             return certDirectory
         }
@@ -429,14 +429,11 @@ public class MitmService: NSObject {
         
         let fileManager = FileManager.default
         var isDir : ObjCBool = false
-        let directory = fileManager.containerURL(forSecurityApplicationGroupIdentifier: GROUPNAME)
-        let dbUrl = directory?.appendingPathComponent("nio.db").absoluteString ?? ""
-        //directory?.appendingPathExtension("nio.db").absoluteString ?? ""
-        //"\(directory?.absoluteString ?? "")nio.db"
-        guard let file = dbUrl.components(separatedBy: "file://").last else {
+        guard let directory = fileManager.containerURL(forSecurityApplicationGroupIdentifier: GROUPNAME) else {
             AxLogger.log("DB file path is nil", level: .Error)
             return ""
         }
+        let file = directory.appendingPathComponent("nio.db").path
         let isExits = fileManager.fileExists(atPath: file, isDirectory:&isDir)
         if !isExits {
             // Ensure the parent directory exists (may not on macOS)
