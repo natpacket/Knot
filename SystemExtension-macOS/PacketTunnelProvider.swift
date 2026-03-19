@@ -1,6 +1,6 @@
 //
 //  PacketTunnelProvider.swift
-//  PacketTunnel-iOS
+//  SystemExtension-macOS
 //
 //  Created by aa123 on 2026/3/19.
 //  Copyright © 2026 Lojii. All rights reserved.

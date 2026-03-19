@@ -68,7 +68,13 @@ final class macOSTunnelService: NSObject, TunnelServiceProtocol {
     // MARK: - TunnelServiceProtocol
 
     func startCapture(config: CaptureConfig) async throws {
-        guard let manager = manager else { throw TunnelError.notReady }
+        guard let manager = manager else {
+            try await installExtension()
+            guard let manager = self.manager else { return }
+            try await configureAndSave(manager: manager, config: config)
+            try manager.connection.startVPNTunnel()
+            return
+        }
         try await configureAndSave(manager: manager, config: config)
         try manager.connection.startVPNTunnel()
     }
