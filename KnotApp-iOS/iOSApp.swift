@@ -10,6 +10,11 @@ struct KnotApp_iOS: App {
         // Setup database
         ASConfigration.setDefaultDB(path: MitmService.getDBPath(), name: ProxyConfig.Database.sessionTableName)
 
+        // Create tables if not exist
+        try? Session.createTable()
+        try? CaptureTask.createTable()
+        try? Rule.createTable()
+
         // First launch: save default rule if none exist
         if Rule.findRules().isEmpty {
             let defaultRule = Rule.defaultRule()
