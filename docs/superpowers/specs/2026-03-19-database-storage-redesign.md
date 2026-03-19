@@ -349,9 +349,11 @@ WHEN OLD.search_text IS NOT NULL BEGIN
 END;
 
 CREATE TRIGGER decoded_fts_update AFTER UPDATE OF search_text ON decoded_entry BEGIN
+    -- 处理所有四种 NULL 转换情况：NULL→NULL, NULL→value, value→NULL, value→value
     INSERT INTO decoded_fts(decoded_fts, rowid, search_text)
-    VALUES('delete', OLD.id, OLD.search_text);
-    INSERT INTO decoded_fts(rowid, search_text) VALUES (NEW.id, NEW.search_text);
+    SELECT 'delete', OLD.id, OLD.search_text WHERE OLD.search_text IS NOT NULL;
+    INSERT INTO decoded_fts(rowid, search_text)
+    SELECT NEW.id, NEW.search_text WHERE NEW.search_text IS NOT NULL;
 END;
 
 CREATE INDEX idx_decoded_flow_id ON decoded_entry(flow_id);
